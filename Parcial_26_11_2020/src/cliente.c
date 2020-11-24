@@ -56,6 +56,7 @@ void cliente_delete(Cliente* this)
 	free(this);
 }
 
+/* Retorna -1 si no encontró el ID, retorna el índice si encontró el ID. */
 int cliente_findClienteById(LinkedList* pArrayListaClientes, int id)
 {
     int retorno = -1;
@@ -64,12 +65,43 @@ int cliente_findClienteById(LinkedList* pArrayListaClientes, int id)
 
     Cliente* pCliente;
 
-    for(int i = 0 ; i < ll_len(pArrayListaClientes) ; i++)
+    if(pArrayListaClientes != NULL && id > 0)
     {
-    	pCliente = ll_get(pArrayListaClientes, i);
-        if(cliente_getIdCliente(pCliente, &idCliente) == 0 && idCliente == id)
+        for(int i = 0 ; i < ll_len(pArrayListaClientes) ; i++)
         {
-            retorno = i;
+        	pCliente = ll_get(pArrayListaClientes, i);
+            if(cliente_getIdCliente(pCliente, &idCliente) == 0 && idCliente == id)
+            {
+                retorno = i;
+                break;
+            }
+        }
+    }
+    return retorno;
+}
+
+/* Retorna -1 si no encontró el ID, retorna el índice si encontró el ID. */
+int cliente_findClienteByIdTxt(LinkedList* pArrayListaClientes, char* pId)
+{
+    int retorno = -1;
+
+    char idCliente[10000];
+
+    Cliente* pCliente;
+
+    if(pArrayListaClientes != NULL && pId != NULL)
+    {
+        for(int i = 0 ; i < ll_len(pArrayListaClientes) ; i++)
+        {
+        	pCliente = ll_get(pArrayListaClientes, i);
+            if(cliente_getIdClienteTxt(pCliente, idCliente) == 0)
+            {
+            	if(strncmp(idCliente, pId, 10000) == 0)
+            	{
+                    retorno = i;
+                    break;
+            	}
+            }
         }
     }
     return retorno;
@@ -122,6 +154,34 @@ int cliente_esCuitRepetido(LinkedList* pArrayListaClientes, char* pCuit)
 				if(strncmp(cuit, pCuit, SIZE_CUIT) == 0)
 				{
 					printf("\nEl CUIT ya existe, por favor ingrese otro.\n");
+					retorno = 1;
+				}
+			}
+		}
+	}
+	return retorno;
+}
+
+/* Retorna 0 si no es repetido, 1 si es repetido.*/
+int cliente_esIdRepetido(LinkedList* pArrayListaClientes, char* pId)
+{
+	int retorno = 0;
+
+	Cliente* pCliente;
+
+	char idCliente[10000];
+
+	if(pArrayListaClientes != NULL && pId != NULL)
+	{
+		for(int i = 0 ; i < ll_len(pArrayListaClientes) ; i++)
+		{
+			pCliente = ll_get(pArrayListaClientes, i);
+			if(pCliente != NULL)
+			{
+				cliente_getIdClienteTxt(pCliente, idCliente);
+				if(strncmp(idCliente, pId, 10000) == 0)
+				{
+					printf("\nEl ID ya existe, por favor ingrese otro.\n");
 					retorno = 1;
 				}
 			}

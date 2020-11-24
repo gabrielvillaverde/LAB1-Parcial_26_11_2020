@@ -145,6 +145,7 @@ int venta_chequearIdYCalcularCantidadAfiches(void* pElement, void* pId)
 	return retorno;
 }
 
+/* Retorna -1 si no encontró el ID de la venta, o retorna el índice de la venta si lo encontró. */
 int venta_findVentaById(LinkedList* pArrayListaVentas, int id)
 {
     int retorno = -1;
@@ -152,12 +153,16 @@ int venta_findVentaById(LinkedList* pArrayListaVentas, int id)
 
     Venta* pVenta;
 
-    for(int i = 0 ; i < ll_len(pArrayListaVentas) ; i++)
+    if(pArrayListaVentas != NULL && id > 0)
     {
-    	pVenta = ll_get(pArrayListaVentas, i);
-        if(venta_getIdVenta(pVenta, &idAux) == 0 && idAux == id)
+        for(int i = 0 ; i < ll_len(pArrayListaVentas) ; i++)
         {
-            retorno = i;
+        	pVenta = ll_get(pArrayListaVentas, i);
+            if(venta_getIdVenta(pVenta, &idAux) == 0 && idAux == id)
+            {
+                retorno = i;
+                break;
+            }
         }
     }
     return retorno;

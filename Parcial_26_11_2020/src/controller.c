@@ -177,6 +177,7 @@ int controller_saveVentasAsText(char* path, LinkedList* pArrayListaVentas)
 * \return (-1) Error (0) todo OK
 */
 
+/*
 int controller_addCliente(LinkedList* pArrayListaClientes)
 {
 	int retorno = -1;
@@ -210,7 +211,91 @@ int controller_addCliente(LinkedList* pArrayListaClientes)
 	}
 	return retorno;
 }
+*/
 
+int controller_addCliente(LinkedList* pArrayListaClientes)
+{
+	int retorno = -1;
+
+	Cliente* pCliente;
+
+	char nombre[SIZE_NOMBRE];
+	char apellido[SIZE_APELLIDO];
+	char cuit[SIZE_CUIT];
+
+	if(pArrayListaClientes != NULL)
+	{
+		pCliente = cliente_new();
+		if( pCliente != NULL &&
+			utn_getString("\nIngrese el nombre:\n", "\nError, ingrese un nombre válido.\n", nombre, SIZE_NOMBRE, 3) == 0 &&
+			utn_getString("\nIngrese el apellido:\n", "\nError, ingrese un apellido válido.\n", apellido, SIZE_APELLIDO, 3) == 0 &&
+			utn_getStringWithNumbersAndSymbols("\nIngrese el CUIT:\n", "\nError, ingrese un CUIT válido.\n", cuit, SIZE_CUIT, 3) == 0 &&
+			cliente_esCuitRepetido(pArrayListaClientes, cuit) == 0)
+		{
+			cliente_setIdCliente(pCliente, generarNuevoId(pArrayListaClientes));
+
+			if(pCliente->idCliente > 0 &&
+				cliente_setNombre(pCliente, nombre) == 0 &&
+				cliente_setApellido(pCliente, apellido) == 0 &&
+				cliente_setCuit(pCliente, cuit) == 0)
+			{
+				if(ll_add(pArrayListaClientes, pCliente) == 0)
+				{
+					printf("\nID del cliente generado es: %d", pCliente->idCliente);
+					retorno = 0;
+				}
+			}
+		}
+	}
+	return retorno;
+}
+
+int controller_addVenta(LinkedList* pArrayListaVentas, LinkedList* pArrayListaClientes)
+{
+	int retorno = -1;
+
+	Venta* pVenta;
+
+	int idCliente;
+	char cantidadAfiches[10000];
+	char nombreArchivo[10000];
+	char zona[10000];
+
+
+	if(pArrayListaVentas != NULL && pArrayListaClientes != NULL)
+	{
+		pVenta = venta_new();
+		if(
+			utn_getInt("\nIngrese el ID del cliente:\n", "\nError, ingrese un ID válido.\n", &idCliente, 3) == 0 &&
+			cliente_findClienteById(pArrayListaClientes, idCliente) != -1 &&
+			utn_getStringWithOnlyNumbers("\nIngrese la cantidad de afiches que quiere vender:\n", "\nError, ingrese una cantidad válida.\n", cantidadAfiches, 1000, 3) == 0 &&
+			utn_getStringWithNumbersAndSymbols("\nIngrese el nombre del archivo con la imagen del afiche:\n", "\nError, ingrese una cantidad válida.\n", nombreArchivo, SIZE_NOMBRE_ARCHIVO, 3) == 0 &&
+			utn_getStringWithOnlyNumbers("\nIngrese la zona: [0] CABA - [1] ZONA SUR  - [2] ZONA OESTE\n" , "\nError, ingrese una zona válida.\n", zona, 10000, 3) == 0)
+		{
+			if(
+			venta_setIdCliente(pVenta, idCliente) == 0 &&
+			venta_setIdVenta(pVenta, generarNuevoIdVentas(pArrayListaVentas)) == 0 &&
+			venta_setCantidadAfichesTxt(pVenta, cantidadAfiches) == 0 &&
+			venta_setNombreArchivo(pVenta, nombreArchivo) == 0 &&
+			venta_setZona(pVenta, zona) == 0 &&
+			venta_setCobrado(pVenta, 0) == 0)
+			{
+				if(ll_add(pArrayListaVentas, pVenta) == 0)
+				{
+					printf("\nID de la venta generada: %d", pVenta->idVenta);
+					retorno = 0;
+				}
+			}
+		}
+		else
+		{
+			printf("\nEl ID del cliente no existe.\n");
+		}
+	}
+	return retorno;
+}
+
+/*
 int controller_addVenta(LinkedList* pArrayListaVentas, LinkedList* pArrayListaClientes)
 {
 	int retorno = -1;
@@ -230,7 +315,8 @@ int controller_addVenta(LinkedList* pArrayListaVentas, LinkedList* pArrayListaCl
 			utn_getStringWithOnlyNumbers("\nIngrese el ID del cliente:\n", "\nError, ingrese un ID válido.\n", idCliente, 1000, 3) == 0 &&
 			utn_getStringWithOnlyNumbers("\nIngrese la cantidad de afiches que quiere vender:\n", "\nError, ingrese una cantidad válida.\n", cantidadAfiches, 1000, 3) == 0 &&
 			utn_getStringWithNumbersAndSymbols("\nIngrese el nombre del archivo con la imagen del afiche:\n", "\nError, ingrese una cantidad válida.\n", nombreArchivo, SIZE_NOMBRE_ARCHIVO, 3) == 0 &&
-			utn_getStringWithOnlyNumbers("\nIngrese la zona: [0] CABA - [1] ZONA SUR  - [2] ZONA OESTE\n" , "\nError, ingrese una zona válida.\n", zona, 10000, 3) == 0)
+			utn_getStringWithOnlyNumbers("\nIngrese la zona: [0] CABA - [1] ZONA SUR  - [2] ZONA OESTE\n" , "\nError, ingrese una zona válida.\n", zona, 10000, 3) == 0 &&
+			cliente_findClienteByIdTxt(pArrayListaClientes, idCliente) != -1)
 		{
 			if(
 			venta_setIdClienteTxt(pVenta, idCliente) == 0 &&
@@ -250,6 +336,7 @@ int controller_addVenta(LinkedList* pArrayListaVentas, LinkedList* pArrayListaCl
 	}
 	return retorno;
 }
+*/
 
 /*
 * \brief Función que imprime los clientes
@@ -345,7 +432,8 @@ int controller_modificarVentas(LinkedList* pArrayListaVentas, LinkedList* pArray
 			printf("\nEstas son las ventas que aún no se han cobrado:\n");
 			if(controller_imprimirVentas(pListaFiltrada) == 0)
 			{
-				if(utn_getInt("\nIngrese el ID de la venta:\n", "\nError, ingrese un ID válido.\n", &idVenta, 3) == 0)
+				if( utn_getInt("\nIngrese el ID de la venta:\n", "\nError, ingrese un ID válido.\n", &idVenta, 3) == 0 &&
+					venta_findVentaById(pArrayListaVentas, idVenta) != -1)
 				{
 					indiceVenta = venta_findVentaById(pArrayListaVentas, idVenta);
 					pVenta = ll_get(pArrayListaVentas, indiceVenta);
@@ -391,6 +479,10 @@ int controller_modificarVentas(LinkedList* pArrayListaVentas, LinkedList* pArray
 						}
 					}while(opcion != 4);
 					retorno = 0;
+				}
+				else
+				{
+					printf("\nEl ID de la venta no existe.\n");
 				}
 			}
 		}

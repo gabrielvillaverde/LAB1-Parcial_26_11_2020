@@ -24,9 +24,12 @@ Cliente* cliente_new(void);
 Cliente* cliente_newParametros(char* idCliente, char* nombre, char* apellido, char* cuit);
 void cliente_delete(Cliente* this);
 int cliente_findClienteById(LinkedList* pArrayListaClientes, int id);
+int cliente_findClienteByIdTxt(LinkedList* pArrayListaClientes, char* pId);
 int cliente_findClienteByIdAndImprimir(LinkedList* pArrayListaClientes, int id);
 int cliente_CalcularCantidadVentasCobradas(void* pElement);
 int cliente_esCuitRepetido(LinkedList* pArrayListaClientes, char* pCuit);
+int cliente_esIdRepetido(LinkedList* pArrayListaClientes, char* pId);
+int cliente_esIdInexistente(LinkedList* pArrayListaClientes, char* pId);
 
 int cliente_setIdClienteTxt(Cliente* this, char* idClienteACargar);
 int cliente_getIdClienteTxt(Cliente* this, char* idCliente);

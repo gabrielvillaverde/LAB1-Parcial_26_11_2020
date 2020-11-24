@@ -20,10 +20,8 @@
 
 /* ERRORES:
  * 1) Al vender un afiche, si ingreso un ID de cliente que no existe, lo toma igual.
- * 2) Al ingresar un ID inexistente a la hora de modificar y cobrar la venta, explota el programa.
- * 3) Cuando hago una venta, y elijo la zona, a la hora de imprimir en vez de la zona me muestra el número.
- * 4) Cambié en controller_cobrarVentas y le agregué que pArrayClientes != NULL, chequear si sigue andando.
- * 5)
+ * 2) Cuando hago una venta, y elijo la zona, a la hora de imprimir en vez de la zona me muestra el número, ¿podría solucionarlo con un sprintf?
+ * 3) Cambié en controller_cobrarVentas y le agregué que pArrayClientes != NULL, chequear si sigue andando.
  */
 
 int main(void)
