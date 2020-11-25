@@ -111,7 +111,7 @@ static int addNode(LinkedList* this, int nodeIndex, void* pElement)
 		{
 			pNewNode = (Node*) malloc(sizeof(Node)); // Reservo memoria para un nuevo nodo.
 
-			pNewNode->pElement = pElement; // Guardo el puntero al elemento dentro del nodo.
+			pNewNode->pElement = pElement; // Guardo el puntero al elemento dentro del nodo. El elemento que recibo como parámetro será el pElement del nuevo nodo.
 			pNewNode->pNextNode = NULL; // Indico que el campo que apunta al próximo nodo de la lista sea NULL.
 
 			if(nodeIndex == 0) // Si estoy en la primera posición...
@@ -122,8 +122,8 @@ static int addNode(LinkedList* this, int nodeIndex, void* pElement)
 			else // Si estoy en cualquier otra posición que no sea la primera (el medio o el final).
 			{
 				pPrevNode = getNode(this, nodeIndex - 1); // Me guardo en pPrevNode el nodo previo al índice que le paso por argumento, que es la posición donde quiero agregar uno.
-				pNewNode->pNextNode = pPrevNode->pNextNode; // El nodo previo debe apuntar al siguiente, no puede apuntar a NULL.
-				pPrevNode->pNextNode = pNewNode; // Al nodo previo, el siguiente de ese será el nuevo nodo (el que cree arriba).
+				pNewNode->pNextNode = pPrevNode->pNextNode; // El nodo previo debe apuntar al siguiente, no puede apuntar a NULL. O sea, me guardo el pNextNode en el nuevo. El nodo nuevo apunta al siguiente del previo.
+				pPrevNode->pNextNode = pNewNode; // El siguiente del nodo previo, será el nodo nuevo (el que cree arriba).
 			}
 			this->size++; // Al agregar uno nuevo, aumento el size de la LinkedList, en se size se guardan la cantidad de nodos que existen.
 			retorno = 0;
@@ -183,10 +183,10 @@ void* ll_get(LinkedList* this, int index)
 
     if(this != NULL && index >= 0 && index < len)
     {
-    	pNode = getNode(this, index);
+    	pNode = getNode(this, index); // Obtengo el nodo y lo guardo en pNode.
 		if(pNode != NULL)
 		{
-			retorno = pNode->pElement;
+			retorno = pNode->pElement; // Retorno el elemento del nodo que obtuve (pNode).
 		}
     }
     return retorno;
@@ -263,7 +263,6 @@ int ll_remove(LinkedList* this, int index)
     		retorno = 0;
     	}
     }
-
     return retorno;
 }
 

@@ -177,42 +177,6 @@ int controller_saveVentasAsText(char* path, LinkedList* pArrayListaVentas)
 * \return (-1) Error (0) todo OK
 */
 
-/*
-int controller_addCliente(LinkedList* pArrayListaClientes)
-{
-	int retorno = -1;
-
-	Cliente* pCliente;
-	Cliente auxiliarCliente;
-
-	if(pArrayListaClientes != NULL)
-	{
-		pCliente = cliente_new();
-		if(pCliente != NULL &&
-				utn_getString("\nIngrese el nombre:\n", "\nError, ingrese un nombre válido.\n", auxiliarCliente.nombre, SIZE_NOMBRE, 3) == 0 &&
-				utn_getString("\nIngrese el apellido:\n", "\nError, ingrese un apellido válido.\n", auxiliarCliente.apellido, SIZE_APELLIDO, 3) == 0 &&
-				utn_getStringWithNumbersAndSymbols("\nIngrese el CUIT:\n", "\nError, ingrese un CUIT válido.\n", auxiliarCliente.cuit, SIZE_CUIT, 3) == 0 &&
-				cliente_esCuitRepetido(pArrayListaClientes, auxiliarCliente.cuit) == 0)
-		{
-			auxiliarCliente.idCliente = generarNuevoId(pArrayListaClientes);
-			if(auxiliarCliente.idCliente > 0 &&
-			cliente_setNombre(pCliente, auxiliarCliente.nombre) == 0 &&
-			cliente_setApellido(pCliente, auxiliarCliente.apellido) == 0 &&
-			cliente_setCuit(pCliente, auxiliarCliente.cuit) == 0 &&
-			cliente_setIdCliente(pCliente, auxiliarCliente.idCliente) == 0)
-			{
-				if(ll_add(pArrayListaClientes, pCliente) == 0)
-				{
-					printf("\nID del cliente generado es: %d", auxiliarCliente.idCliente);
-					retorno = 0;
-				}
-			}
-		}
-	}
-	return retorno;
-}
-*/
-
 int controller_addCliente(LinkedList* pArrayListaClientes)
 {
 	int retorno = -1;
@@ -250,6 +214,57 @@ int controller_addCliente(LinkedList* pArrayListaClientes)
 	return retorno;
 }
 
+/*
+* \brief Función que da de baja al empleado junto con todas sus ventas
+* \param pArrayListEmployee LinkedList* es el puntero al array de empleados.
+* \return (-1) Error (0) todo OK
+*/
+
+int controller_removeCliente(LinkedList* pArrayListaClientes)
+{
+	int retorno = -1;
+
+	Cliente* pCliente;
+
+	int idCliente;
+	int indiceClienteEliminar;
+	int opcion;
+
+	if(pArrayListaClientes != NULL)
+	{
+		controller_imprimirClientes(pArrayListaClientes);
+		if( utn_getInt("\nIngrese el ID del cliente a borrar:\n", "\nError, ingrese un ID válido.\n", &idCliente, 3) == 0 &&
+			cliente_findClienteById(pArrayListaClientes, idCliente) != -1)
+		{
+			printf("\nLos datos del cliente al que corresponde ese ID son los siguientes:\n");
+			cliente_findClienteByIdAndImprimir(pArrayListaClientes, idCliente);
+
+			indiceClienteEliminar = cliente_findClienteById(pArrayListaClientes, idCliente);
+			pCliente = ll_get(pArrayListaClientes, indiceClienteEliminar);
+
+			if(pCliente != NULL)
+			{
+				if(utn_getIntConMinMax("\n¿Desea eliminar el cliente? [1] SI - [0] NO\n", "\nError, ingrese [1] SI - [0] NO\n", &opcion, 0, 1, 3) == 0)
+				{
+					cliente_delete(pCliente);
+					ll_remove(pArrayListaClientes, indiceClienteEliminar);
+					retorno = 0;
+				}
+				else
+				{
+					printf("\nEl cliente no ha sido dado de baja.\n");
+				}
+			}
+		}
+		else
+		{
+			printf("\nID del cliente no existe.\n");
+		}
+	}
+
+	return retorno;
+}
+
 int controller_addVenta(LinkedList* pArrayListaVentas, LinkedList* pArrayListaClientes)
 {
 	int retorno = -1;
@@ -265,8 +280,7 @@ int controller_addVenta(LinkedList* pArrayListaVentas, LinkedList* pArrayListaCl
 	if(pArrayListaVentas != NULL && pArrayListaClientes != NULL)
 	{
 		pVenta = venta_new();
-		if(
-			utn_getInt("\nIngrese el ID del cliente:\n", "\nError, ingrese un ID válido.\n", &idCliente, 3) == 0 &&
+		if(	utn_getInt("\nIngrese el ID del cliente al cuál se le añadirá una venta:\n", "\nError, ingrese un ID válido.\n", &idCliente, 3) == 0 &&
 			cliente_findClienteById(pArrayListaClientes, idCliente) != -1 &&
 			utn_getStringWithOnlyNumbers("\nIngrese la cantidad de afiches que quiere vender:\n", "\nError, ingrese una cantidad válida.\n", cantidadAfiches, 1000, 3) == 0 &&
 			utn_getStringWithNumbersAndSymbols("\nIngrese el nombre del archivo con la imagen del afiche:\n", "\nError, ingrese una cantidad válida.\n", nombreArchivo, SIZE_NOMBRE_ARCHIVO, 3) == 0 &&
@@ -295,48 +309,91 @@ int controller_addVenta(LinkedList* pArrayListaVentas, LinkedList* pArrayListaCl
 	return retorno;
 }
 
-/*
-int controller_addVenta(LinkedList* pArrayListaVentas, LinkedList* pArrayListaClientes)
+int controller_modificarVentas(LinkedList* pArrayListaVentas, LinkedList* pArrayListaClientes)
 {
 	int retorno = -1;
 
-	Venta* pVenta;
+	LinkedList* pListaFiltrada;
 
-	char idCliente[10000];
+	Venta* pVenta = NULL;
+	Cliente* pCliente = NULL;
+
+	int idVenta;
+	int indiceVentaModificar;
+	int indiceCliente;
+
+	int opcion;
+
 	char cantidadAfiches[10000];
 	char nombreArchivo[10000];
 	char zona[10000];
 
-
-	if(pArrayListaVentas != NULL && pArrayListaClientes != NULL)
+	if(pArrayListaVentas != NULL)
 	{
-		pVenta = venta_new();
-		if(
-			utn_getStringWithOnlyNumbers("\nIngrese el ID del cliente:\n", "\nError, ingrese un ID válido.\n", idCliente, 1000, 3) == 0 &&
-			utn_getStringWithOnlyNumbers("\nIngrese la cantidad de afiches que quiere vender:\n", "\nError, ingrese una cantidad válida.\n", cantidadAfiches, 1000, 3) == 0 &&
-			utn_getStringWithNumbersAndSymbols("\nIngrese el nombre del archivo con la imagen del afiche:\n", "\nError, ingrese una cantidad válida.\n", nombreArchivo, SIZE_NOMBRE_ARCHIVO, 3) == 0 &&
-			utn_getStringWithOnlyNumbers("\nIngrese la zona: [0] CABA - [1] ZONA SUR  - [2] ZONA OESTE\n" , "\nError, ingrese una zona válida.\n", zona, 10000, 3) == 0 &&
-			cliente_findClienteByIdTxt(pArrayListaClientes, idCliente) != -1)
+		pListaFiltrada = ll_filter(pArrayListaVentas, venta_chequearEstadoNoCobrado);
+
+		if(pListaFiltrada != NULL)
 		{
-			if(
-			venta_setIdClienteTxt(pVenta, idCliente) == 0 &&
-			venta_setIdVenta(pVenta, generarNuevoIdVentas(pArrayListaVentas)) == 0 &&
-			venta_setCantidadAfichesTxt(pVenta, cantidadAfiches) == 0 &&
-			venta_setNombreArchivo(pVenta, nombreArchivo) == 0 &&
-			venta_setZona(pVenta, zona) == 0 &&
-			venta_setCobrado(pVenta, 0) == 0)
+			printf("\nEstas son las ventas que aún no se han cobrado:\n");
+			if(controller_imprimirVentas(pListaFiltrada) == 0)
 			{
-				if(ll_add(pArrayListaVentas, pVenta) == 0)
+				if( utn_getInt("\nIngrese el ID de la venta a modificar:\n", "\nError, ingrese un ID válido.\n", &idVenta, 3) == 0 &&
+					venta_findVentaById(pArrayListaVentas, idVenta) != -1)
 				{
-					printf("\nID de la venta generada: %d", pVenta->idVenta);
+					indiceVentaModificar = venta_findVentaById(pArrayListaVentas, idVenta);
+					pVenta = ll_get(pArrayListaVentas, indiceVentaModificar);
+
+					indiceCliente = cliente_findClienteById(pArrayListaClientes, pVenta->idCliente);
+					pCliente = ll_get(pArrayListaClientes, indiceCliente);
+
+					printf("\nEl cliente al que pertenece la venta es %s %s y su CUIT es %s", pCliente->nombre, pCliente->apellido, pCliente->cuit);
+					do
+					{
+						if(utn_getInt("\nElija un campo a modificar: [1] Cantidad de afiches - [2] Nombre del archivo - [3] Zona - [4] Salir\n", "\nError, ingrese un número válido.\n", &opcion, 3) == 0)
+						{
+							switch(opcion)
+							{
+							case 1:
+								if(utn_getStringWithOnlyNumbers("\nIngrese la nueva cantidad de afiches:\n", "\nError, ingrese una cantidad válida.\n", cantidadAfiches, 1000, 3) == 0)
+								{
+									if(venta_setCantidadAfichesTxt(pVenta, cantidadAfiches) == 0)
+									{
+										printf("\nLa cantidad de afiches fue modificada correctamente.\n");
+									}
+								}
+								break;
+							case 2:
+								if(utn_getStringWithNumbersAndSymbols("\nIngrese el nombre del nuevo archivo con la imagen del afiche:\n", "\nError, ingrese un nombre válido.\n", nombreArchivo, SIZE_NOMBRE_ARCHIVO, 3) == 0)
+								{
+									if(venta_setNombreArchivo(pVenta, nombreArchivo) == 0)
+									{
+										printf("\nEl nombre del archivo fue modificado correctamente.\n");
+									}
+								}
+								break;
+							case 3:
+								if(utn_getStringWithOnlyNumbers("\nIngrese la nueva: [0] CABA - [1] ZONA SUR  - [2] ZONA OESTE\n" , "\nError, ingrese una zona válida.\n", zona, 10000, 3) == 0)
+								{
+									if(venta_setZona(pVenta, zona) == 0)
+									{
+										printf("\nLa zona modificada correctamente.\n");
+									}
+								}
+								break;
+							}
+						}
+					}while(opcion != 4);
 					retorno = 0;
+				}
+				else
+				{
+					printf("\nEl ID de la venta no existe.\n");
 				}
 			}
 		}
 	}
 	return retorno;
 }
-*/
 
 /*
 * \brief Función que imprime los clientes
@@ -403,91 +460,6 @@ int controller_imprimirVentas(LinkedList* pArrayListaVentas)
 		}
 	}
     return retorno;
-}
-
-int controller_modificarVentas(LinkedList* pArrayListaVentas, LinkedList* pArrayListaClientes)
-{
-	int retorno = -1;
-
-	LinkedList* pListaFiltrada;
-	Venta* pVenta = NULL;
-	Cliente* pCliente = NULL;
-
-	int idVenta;
-	int indiceVenta;
-	int indiceCliente;
-
-	int opcion;
-
-	char cantidadAfiches[10000];
-	char nombreArchivo[10000];
-	char zona[10000];
-
-	if(pArrayListaVentas != NULL)
-	{
-		pListaFiltrada = ll_filter(pArrayListaVentas, venta_chequearEstadoNoCobrado);
-
-		if(pListaFiltrada != NULL)
-		{
-			printf("\nEstas son las ventas que aún no se han cobrado:\n");
-			if(controller_imprimirVentas(pListaFiltrada) == 0)
-			{
-				if( utn_getInt("\nIngrese el ID de la venta:\n", "\nError, ingrese un ID válido.\n", &idVenta, 3) == 0 &&
-					venta_findVentaById(pArrayListaVentas, idVenta) != -1)
-				{
-					indiceVenta = venta_findVentaById(pArrayListaVentas, idVenta);
-					pVenta = ll_get(pArrayListaVentas, indiceVenta);
-
-					indiceCliente = cliente_findClienteById(pArrayListaClientes, pVenta->idCliente);
-					pCliente = ll_get(pArrayListaClientes, indiceCliente);
-
-					printf("\nEl cliente al que pertenece la venta es %s %s y su CUIT es %s", pCliente->nombre, pCliente->apellido, pCliente->cuit);
-					do
-					{
-						if(utn_getInt("\nElija un campo a modificar: [1] Cantidad de afiches - [2] Nombre del archivo - [3] Zona - [4] Salir\n", "\nError, ingrese un número válido.\n", &opcion, 3) == 0)
-						{
-							switch(opcion)
-							{
-							case 1:
-								if(utn_getStringWithOnlyNumbers("\nIngrese la nueva cantidad de afiches:\n", "\nError, ingrese una cantidad válida.\n", cantidadAfiches, 1000, 3) == 0)
-								{
-									if(venta_setCantidadAfichesTxt(pVenta, cantidadAfiches) == 0)
-									{
-										printf("\nLa cantidad de afiches fue modificada correctamente.\n");
-									}
-								}
-								break;
-							case 2:
-								if(utn_getStringWithNumbersAndSymbols("\nIngrese el nombre del nuevo archivo con la imagen del afiche:\n", "\nError, ingrese un nombre válido.\n", nombreArchivo, SIZE_NOMBRE_ARCHIVO, 3) == 0)
-								{
-									if(venta_setNombreArchivo(pVenta, nombreArchivo) == 0)
-									{
-										printf("\nEl nombre del archivo fue modificado correctamente.\n");
-									}
-								}
-								break;
-							case 3:
-								if(utn_getStringWithOnlyNumbers("\nIngrese la nueva: [0] CABA - [1] ZONA SUR  - [2] ZONA OESTE\n" , "\nError, ingrese una zona válida.\n", zona, 10000, 3) == 0)
-								{
-									if(venta_setZona(pVenta, zona) == 0)
-									{
-										printf("\nLa zona modificada correctamente.\n");
-									}
-								}
-								break;
-							}
-						}
-					}while(opcion != 4);
-					retorno = 0;
-				}
-				else
-				{
-					printf("\nEl ID de la venta no existe.\n");
-				}
-			}
-		}
-	}
-	return retorno;
 }
 
 int controller_cobrarVentas(LinkedList* pArrayListaVentas, LinkedList* pArrayListaClientes)

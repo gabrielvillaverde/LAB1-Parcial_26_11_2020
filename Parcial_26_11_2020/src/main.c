@@ -14,15 +14,11 @@
 #include "utn.h"
 #include "controller.h"
 #include "ventas.h"
+#include "cliente.h"
+#include "informes.h"
 
 #define FALSE 0
 #define TRUE 1
-
-/* ERRORES:
- * 1) Al vender un afiche, si ingreso un ID de cliente que no existe, lo toma igual.
- * 2) Cuando hago una venta, y elijo la zona, a la hora de imprimir en vez de la zona me muestra el número, ¿podría solucionarlo con un sprintf?
- * 3) Cambié en controller_cobrarVentas y le agregué que pArrayClientes != NULL, chequear si sigue andando.
- */
 
 int main(void)
 {
@@ -31,8 +27,8 @@ int main(void)
 	int opcion;
 	int opcionSubMenu;
 
-	LinkedList* listaClientes = ll_newLinkedList(); // Creo una LinkedList de clientes.
-	LinkedList* listaVentas = ll_newLinkedList(); // Creo una LinkedList de ventas.
+	LinkedList* listaClientes = ll_newLinkedList();
+	LinkedList* listaVentas = ll_newLinkedList();
 
 	if(controller_loadListaClientesFromText("clientes.csv", listaClientes) == 0)
 	{
@@ -56,9 +52,10 @@ int main(void)
     			"7  -  Generar estadísticas.\n"
     			"8  -  Imprimir clientes.\n"
     			"9  -  Imprimir ventas.\n"
-    			"10  - Guardar los datos de los clientes en clientes.csv.\n"
-    			"11  - Guardar los datos de las ventas en ventas.csv.\n"
-    			"12  -  Salir\n", "\nError, ingrese una opción entre 1 y 10.\n", &opcion, 1, 12, 3) == 0)
+    			"10 -  Guardar los datos de los clientes en clientes.csv.\n"
+    			"11 -  Guardar los datos de las ventas en ventas.csv.\n"
+    			"12 -  Eliminar cliente.\n"
+    			"13  -  Salir\n", "\nError, ingrese una opción entre 1 y 13.\n", &opcion, 1, 13, 3) == 0)
     	{
     		switch(opcion)
     		{
@@ -118,7 +115,7 @@ int main(void)
     					switch(opcionSubMenu)
     					{
     					case 1:
-    		    			if(controller_imprimirClienteConMasAfichesVendidos(listaClientes, listaVentas) == 0)
+    		    			if(informes_imprimirClienteConMasAfichesVendidos(listaClientes, listaVentas) == 0)
     		    			{
     		    				printf("\El cliente con más afiches vendidos fue impreso correctamente.\n");
     		    			}
@@ -128,7 +125,7 @@ int main(void)
     		    			}
     						break;
     					case 2:
-    		    			if(controller_imprimirClienteConMenosAfichesVendidos(listaClientes, listaVentas) == 0)
+    		    			if(informes_imprimirClienteConMenosAfichesVendidos(listaClientes, listaVentas) == 0)
     		    			{
     		    				printf("\El cliente con menos afiches vendidos fue impreso correctamente.\n");
     		    			}
@@ -138,7 +135,7 @@ int main(void)
     		    			}
     						break;
     					case 3:
-    		    			if(controller_imprimirVentaConMasAfichesVendidos(listaClientes, listaVentas) == 0)
+    		    			if(informes_imprimirVentaConMasAfichesVendidos(listaClientes, listaVentas) == 0)
     		    			{
     		    				printf("\nVenta con más afiches vendidos impresa correctamente.\n");
     		    			}
@@ -175,9 +172,15 @@ int main(void)
     				printf("\nArchivo de ventas actualizado.\n");
     			}
     			break;
+    		case 12:
+    			if(controller_removeCliente(listaClientes) == 0)
+    			{
+    				printf("\nEl cliente fue eliminado junto con todas sus ventas.\n");
+    			}
+    			break;
     		}
     	}
-	}while(opcion != 12);
+	}while(opcion != 13);
 
 	return EXIT_SUCCESS;
 }

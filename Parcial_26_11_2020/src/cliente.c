@@ -53,7 +53,10 @@ Cliente* cliente_newParametros(char* idCliente, char* nombre, char* apellido, ch
 
 void cliente_delete(Cliente* this)
 {
-	free(this);
+	if(this != NULL)
+	{
+		free(this);
+	}
 }
 
 /* Retorna -1 si no encontró el ID, retorna el índice si encontró el ID. */
