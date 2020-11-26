@@ -116,13 +116,13 @@ static int addNode(LinkedList* this, int nodeIndex, void* pElement)
 
 			if(nodeIndex == 0) // Si estoy en la primera posición...
 			{
-				pNewNode->pNextNode = this->pFirstNode; // Lo agrego en el primero, que sería el pFirstNode.
-				this->pFirstNode = pNewNode;
+				pNewNode->pNextNode = this->pFirstNode; // Hago que el nuevo nodo apunte a la posición 0 (al nodo que estaba antes de que yo agregue el nuevo).
+				this->pFirstNode = pNewNode; // Hago que en la LL, el puntero al primer nodo apunte al nuevo nodo que agrego. Min: 3:06:06
 			}
 			else // Si estoy en cualquier otra posición que no sea la primera (el medio o el final).
 			{
 				pPrevNode = getNode(this, nodeIndex - 1); // Me guardo en pPrevNode el nodo previo al índice que le paso por argumento, que es la posición donde quiero agregar uno.
-				pNewNode->pNextNode = pPrevNode->pNextNode; // El nodo previo debe apuntar al siguiente, no puede apuntar a NULL. O sea, me guardo el pNextNode en el nuevo. El nodo nuevo apunta al siguiente del previo.
+				pNewNode->pNextNode = pPrevNode->pNextNode; // Estoy haciendo que el nodo nuevo apunte hacia donde estaba apuntando el nodo previo, de lo contrario la lista se rompería. Por ejemplo, si agrego un nodo entre el 1 y el 2, ese nuevo nodo que agregué debe apuntar hacia donde apuntaba el 1 (que apuntaba al 2).
 				pPrevNode->pNextNode = pNewNode; // El siguiente del nodo previo, será el nodo nuevo (el que cree arriba).
 			}
 			this->size++; // Al agregar uno nuevo, aumento el size de la LinkedList, en se size se guardan la cantidad de nodos que existen.
@@ -221,7 +221,6 @@ int ll_set(LinkedList* this, int index, void* pElement)
     return retorno;
 }
 
-
 /** \brief Elimina un elemento de la lista
  *
  * \param this LinkedList* Puntero a la lista
@@ -230,6 +229,7 @@ int ll_set(LinkedList* this, int index, void* pElement)
                         ( 0) Si funciono correctamente
  *
  */
+
 int ll_remove(LinkedList* this, int index)
 {
 	// Elimina NODOS de la lista.
@@ -247,17 +247,19 @@ int ll_remove(LinkedList* this, int index)
     	{
     		if(index == 0) // Si estoy en la primera posición...
     		{
-    			this->pFirstNode = NULL; // El puntero al primer nodo apuntará a NULL.
+    			this->pFirstNode = pNodeToRemove->pNextNode; // Le paso al primer nodo de la lista, hacia donde apunta el nodo que voy a remover.B
+    			// this->pFirstNode = NULL; Esto provocaría que al borrar el primer nodo de la lista, se rompa la LinkedList.
     		}
     		else
     		{
     			pPreviousNode = getNode(this, index-1); // Me guardo en pPreviousNode el nodo previo al índice que le paso como argumento.
     			if(pPreviousNode != NULL) // Si ese nodo previo es distinto de NULL..
     			{
-    				pPreviousNode->pNextNode = pNodeToRemove->pNextNode; // Hago que apunte al próximo.
+    				pPreviousNode->pNextNode = pNodeToRemove->pNextNode; // Hago que el nodo previo al que voy a remover apunte al que le sigue del que voy a remover.
+    				// Es como si en un caso de 4 nodos, voy a borrar el 2, es necesario que el 1 apunte al 3 antes de borrar el 2, porque sino se rompe la lista y no hay manera de enlazar el 1 y el 3.
     			}
     		}
-    		free(pNodeToRemove);
+    		free(pNodeToRemove); // Y finalmente ya sí puedo borrar el nodo objetivo.
     		pNodeToRemove = NULL;
     		this->size--;
     		retorno = 0;
@@ -773,11 +775,8 @@ int ll_count(LinkedList* this, int(*pFunc)(void*))
 		for(int i = 0 ; i < ll_len(this) ; i++)
 		{
 			pElement = ll_get(this, i);
-			if(pFunc(pElement) == 1)
-			{
-				acum = acum + pFunc(pElement);
-				retorno = acum;
-			}
+			acum = acum + pFunc(pElement);
+			retorno = acum;
 		}
 	}
 	return retorno;

@@ -27,10 +27,12 @@ typedef struct
 Venta* venta_new(void);
 Venta* venta_newParametros(char* idCliente, char* idVenta, char* cantidadAfiches, char* nombreArchivo, char* zona, char* cobrado);
 void venta_delete(Venta* this);
+int venta_chequearEstadoSiCobrado(void* pElement);
 int venta_chequearEstadoNoCobrado(void* pElement);
-int venta_chequearEstadoCobrado(void* pElement);
+int venta_chequearId(void* pElement, void* pId);
 int venta_chequearIdYEstadoCobranza(void* pElement, void* pId, void* pEstado);
 int venta_chequearIdYCalcularCantidadAfiches(void* pElement, void* pId);
+int venta_retornarCantidadAfiches (void* argumento);
 int venta_contarClienteConMasAfichesVendidos(void* pElement);
 int venta_findVentaById(LinkedList* pArrayListaVentas, int id);
 

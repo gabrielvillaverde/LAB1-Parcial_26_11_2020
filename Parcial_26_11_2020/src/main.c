@@ -55,7 +55,9 @@ int main(void)
     			"10 -  Guardar los datos de los clientes en clientes.csv.\n"
     			"11 -  Guardar los datos de las ventas en ventas.csv.\n"
     			"12 -  Eliminar cliente.\n"
-    			"13  -  Salir\n", "\nError, ingrese una opción entre 1 y 13.\n", &opcion, 1, 13, 3) == 0)
+    			"13 -  Eliminar cliente junto con todas sus ventas.\n"
+    			"14 -  Ordenar clientes.\n"
+    			"15  -  Salir\n", "\nError, ingrese una opción entre 1 y 13.\n", &opcion, 1, 15, 3) == 0)
     	{
     		switch(opcion)
     		{
@@ -178,9 +180,21 @@ int main(void)
     				printf("\nEl cliente fue eliminado junto con todas sus ventas.\n");
     			}
     			break;
+    		case 13:
+    			if(controller_removeClienteConTodasSusVentas(listaClientes, listaVentas) == 0)
+    			{
+    				printf("\nEl cliente fue eliminado junto con todas sus ventas.\n");
+    			}
+    			break;
+    		case 14:
+    			if(controller_sortClientes(listaClientes) == 0)
+    			{
+    				printf("\nClientes ordenados correctamente.\n");
+    			}
+    			break;
     		}
     	}
-	}while(opcion != 13);
+	}while(opcion != 15);
 
 	return EXIT_SUCCESS;
 }

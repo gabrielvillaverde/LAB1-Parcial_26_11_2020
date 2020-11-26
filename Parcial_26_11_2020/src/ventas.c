@@ -55,7 +55,10 @@ Venta* venta_newParametros(char* idCliente, char* idVenta, char* cantidadAfiches
 
 void venta_delete(Venta* this)
 {
-	free(this);
+	if(this != NULL)
+	{
+		free(this);
+	}
 }
 
 /*
@@ -80,7 +83,7 @@ int venta_chequearEstadoNoCobrado(void* pElement)
 /*
  * Retorna 1 si OK, 0 ERROR.
  */
-int venta_chequearEstadoCobrado(void* pElement)
+int venta_chequearEstadoSiCobrado(void* pElement)
 {
 	int retorno = 0;
 	int cobrado;
@@ -89,6 +92,29 @@ int venta_chequearEstadoCobrado(void* pElement)
 	{
 		venta_getCobrado((Venta*)pElement, &cobrado);
 		if(cobrado == 1)
+		{
+			retorno = 1;
+		}
+	}
+	return retorno;
+}
+
+/*
+ * Retorna 1 si OK, 0 ERROR.
+ */
+int venta_chequearId(void* pElement, void* pId)
+{
+	int retorno = 0;
+
+	int cobrado;
+	int idCliente;
+
+	int* pIdAuxiliar = (int*) pId; // Casteo como puntero a entero y lo guardo en un puntero auxiliar a entero.
+
+	if(pElement != NULL)
+	{
+		venta_getIdCliente((Venta*)pElement, &idCliente); // Obtengo el ID del cliente.
+		if(idCliente == *pIdAuxiliar) // Comparo el ID del cliente con el puntero a entero del ID del cliente que recibo como parámetro.
 		{
 			retorno = 1;
 		}
@@ -141,6 +167,22 @@ int venta_chequearIdYCalcularCantidadAfiches(void* pElement, void* pId)
 		{
 			retorno = cantidadAfiches;
 		}
+	}
+	return retorno;
+}
+
+int venta_retornarCantidadAfiches (void* pElement)
+{
+	int retorno = 0;
+
+	int cantidadAfiches;
+
+	Venta* pVenta = (Venta*) pElement;
+
+	if(pVenta != NULL)
+	{
+		venta_getCantidadAfiches(pVenta, &cantidadAfiches);
+		retorno = cantidadAfiches;
 	}
 	return retorno;
 }

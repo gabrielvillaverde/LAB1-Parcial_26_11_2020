@@ -22,10 +22,16 @@ int informes_imprimirClienteConMasAfichesVendidos(LinkedList* pArrayListaCliente
 
 	Cliente* pCliente = NULL;
 
+	LinkedList* pListaFiltrada;
+
 	int idCliente;
 	int idClienteConMasAfiches;
 	int cantidadAfiches;
 	int cantidadAfichesMaxima;
+
+	int estado = 1;
+
+	int flag = FALSE;
 
 	if(pArrayListaClientes != NULL && pArrayListaVentas != NULL)
 	{
@@ -33,13 +39,26 @@ int informes_imprimirClienteConMasAfichesVendidos(LinkedList* pArrayListaCliente
 		{
 			pCliente = ll_get(pArrayListaClientes, i);
 			cliente_getIdCliente(pCliente, &idCliente);
-			cantidadAfiches = ll_reduceInt(pArrayListaVentas, venta_chequearIdYCalcularCantidadAfiches, &idCliente);
-			if(cantidadAfiches != 0)
+
+			pListaFiltrada = ll_filter3(pArrayListaVentas, venta_chequearIdYEstadoCobranza, &idCliente, &estado);
+
+			if(pListaFiltrada != NULL && ll_len(pListaFiltrada) > 0)
 			{
-				if(i == 0 || cantidadAfiches > cantidadAfichesMaxima)
+				cantidadAfiches = ll_count(pListaFiltrada, venta_retornarCantidadAfiches);
+
+				if(cantidadAfiches != 0)
 				{
-					cantidadAfichesMaxima = cantidadAfiches;
-					idClienteConMasAfiches = idCliente;
+					if(flag == FALSE)
+					{
+						cantidadAfichesMaxima = cantidadAfiches;
+						idClienteConMasAfiches = idCliente;
+						flag = TRUE;
+					}
+					else if(cantidadAfiches > cantidadAfichesMaxima)
+					{
+						cantidadAfichesMaxima = cantidadAfiches;
+						idClienteConMasAfiches = idCliente;
+					}
 				}
 			}
 		}
@@ -57,28 +76,47 @@ int informes_imprimirClienteConMenosAfichesVendidos(LinkedList* pArrayListaClien
 
 	Cliente* pCliente = NULL;
 
+	LinkedList* pListaFiltrada;
+
 	int idCliente;
 	int idClienteConMenosAfiches;
 	int cantidadAfiches;
 	int cantidadAfichesMinima;
 
+	int estado = 1;
+
+	int flag = FALSE;
+
 	if(pArrayListaClientes != NULL && pArrayListaVentas != NULL)
 	{
 		for(int i = 0 ; i < ll_len(pArrayListaClientes); i++)
 		{
-			pCliente = ll_get(pArrayListaClientes, i);
+			pCliente = ll_get(pArrayListaClientes, i); // Obtengo el cliente pasándole el índice.
 			cliente_getIdCliente(pCliente, &idCliente);
-			cantidadAfiches = ll_reduceInt(pArrayListaVentas, venta_chequearIdYCalcularCantidadAfiches, &idCliente);
-			if(cantidadAfiches != 0)
+
+			pListaFiltrada = ll_filter3(pArrayListaVentas, venta_chequearIdYEstadoCobranza, &idCliente, &estado);
+
+			if(pListaFiltrada != NULL && ll_len(pListaFiltrada) > 0) // Para que no reciba lista de ventas vacías, ya que puede haber clientes sin ventas cobradas y su lista filtrada va a tener 0 elementos.
 			{
-				if(i == 0 || cantidadAfiches < cantidadAfichesMinima)
+				cantidadAfiches = ll_count(pListaFiltrada, venta_retornarCantidadAfiches);
+
+				if(cantidadAfiches != 0)
 				{
-					cantidadAfichesMinima = cantidadAfiches;
-					idClienteConMenosAfiches = idCliente;
+					if(flag == FALSE)
+					{
+						cantidadAfichesMinima = cantidadAfiches;
+						idClienteConMenosAfiches = idCliente;
+						flag = TRUE;
+					}
+					else if(cantidadAfiches < cantidadAfichesMinima)
+					{
+						cantidadAfichesMinima = cantidadAfiches;
+						idClienteConMenosAfiches = idCliente;
+					}
 				}
 			}
 		}
-		printf("\nEl cliente al que se le vendieron más afiches fue:\n");
+		printf("\nEl cliente al que se le vendieron menos afiches fue:\n");
 		cliente_findClienteByIdAndImprimir(pArrayListaClientes, idClienteConMenosAfiches);
 		printf("\nCon una cantidad total de: %d\n", cantidadAfichesMinima);
 		retorno = 0;
@@ -104,9 +142,10 @@ int informes_imprimirVentaConMasAfichesVendidos(LinkedList* pArrayListaClientes,
 
 	if(pArrayListaClientes != NULL && pArrayListaVentas != NULL)
 	{
-		for(int i = 0 ; i < ll_len(pArrayListaVentas) ; i++)
+		pListaFiltrada = ll_filter(pArrayListaVentas, venta_chequearEstadoSiCobrado);
+
+		for(int i = 0 ; i < ll_len(pListaFiltrada) ; i++)
 		{
-			pListaFiltrada = ll_filter(pArrayListaVentas, venta_chequearEstadoCobrado);
 			if(pListaFiltrada != NULL)
 			{
 				pVenta = ll_get(pListaFiltrada, i);
@@ -129,6 +168,7 @@ int informes_imprimirVentaConMasAfichesVendidos(LinkedList* pArrayListaClientes,
 		printf("\nEl ID de la venta con más afiches vendidos es: %d\n", idVenta);
 		printf("\nLos datos del cliente al que corresponde esta venta son los siguientes:\n");
 		cliente_findClienteByIdAndImprimir(pArrayListaClientes, idCliente);
+		printf("\nCon una cantidad total de: %d\n", cantidadAfichesMaxima);
 		retorno = 0;
 	}
 	return retorno;

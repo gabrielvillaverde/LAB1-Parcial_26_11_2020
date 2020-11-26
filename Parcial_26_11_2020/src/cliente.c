@@ -194,6 +194,161 @@ int cliente_esIdRepetido(LinkedList* pArrayListaClientes, char* pId)
 }
 
 /*
+* \brief Función que ordena los clientes
+* \param LinkedList* puntero a la lista de clientes.
+* \return (-1) Error (0) todo OK
+*/
+int cliente_sortClientes(LinkedList* pArrayListaClientes)
+{
+	int retorno = -1;
+
+	int opcion;
+	int orden;
+
+	if(pArrayListaClientes != NULL)
+	{
+		do
+		{
+		if(utn_getIntConMinMax("\n1 - Ordenar la lista por nombre."
+							   "\n2 - Ordenar la lista por apellido."
+							   "\n3 - Ordenar la lista por ID."
+							   "\n4 - Volver al menú anterior.\n",
+							   "\nError, por favor elija una opción entre 1 y 4.\n", &opcion, 1, 4, 3) == 0)
+		{
+			if(opcion != 4)
+			{
+				if(utn_getIntConMinMax("\n¿Cómo quiere ordenar la lista? [1 - Ascendente] - [0 - Descendente]\n",
+						      "\nError, escoja una opción entre 1 y 2.\n", &orden, 0, 1, 3) == 0)
+				{
+					switch(opcion)
+					{
+						case 1:
+							printf("\nUsted ordenó la lista por nombre, ahora puede volver al menú anterior.\n");
+							ll_sort(pArrayListaClientes, cliente_compareByName, orden);
+							break;
+						case 2:
+							printf("\nUsted ordenó la lista por apellido, ahora puede volver al menú anterior.\n");
+							ll_sort(pArrayListaClientes, cliente_compareByApellido, orden);
+							break;
+						case 3:
+							printf("\nUsted ordenó la lista por ID, ahora puede volver al menú anterior.\n");
+							ll_sort(pArrayListaClientes, cliente_compareById, orden);
+							break;
+					}
+				}
+			}
+		}
+		}while(opcion != 4);
+	}
+	return retorno;
+}
+
+/*
+* \brief Función que compara los nombres
+* \param puntero al primer elemento.
+* \param puntero al segundo elemento.
+* \return (0) si son iguales, (-1) si el primero es menor al segundo, (1) si el primero es mayor al segundo
+*/
+int cliente_compareByName(void* pFirstElem, void* pSecondElem)
+{
+	int retorno = 0;
+
+	char firstName[10000];
+	char secondName[10000];
+
+	cliente_getNombre(pFirstElem, firstName);
+	cliente_getNombre(pSecondElem, secondName);
+
+	if(strncmp(firstName, secondName, 100) > 0)
+	{
+		retorno = 1;
+	}
+	else
+	if(strncmp(firstName, secondName, 100) < 0)
+	{
+		retorno = -1;
+	}
+	return retorno;
+}
+
+/*
+* \brief Función que compara los apellidos
+* \param puntero al primer elemento.
+* \param puntero al segundo elemento.
+* \return (0) si son iguales, (-1) si el primero es menor al segundo, (1) si el primero es mayor al segundo
+*/
+int cliente_compareByApellido(void* pFirstElem, void* pSecondElem)
+{
+	int retorno = 0;
+
+	char firstApellido[10000];
+	char secondApellido[10000];
+
+	cliente_getApellido(pFirstElem, firstApellido);
+	cliente_getApellido(pSecondElem, secondApellido);
+
+	if(strncmp(firstApellido, secondApellido, 100) > 0)
+	{
+		retorno = 1;
+	}
+	else
+	if(strncmp(firstApellido, secondApellido, 100) < 0)
+	{
+		retorno = -1;
+	}
+	return retorno;
+}
+
+/*
+* \brief Función que compara los CUIT
+* \param puntero al primer elemento.
+* \param puntero al segundo elemento.
+* \return (0) si son iguales, (-1) si el primero es menor al segundo, (1) si el primero es mayor al segundo
+*/
+int cliente_compareByCuit(void* pFirstElem, void* pSecondElem)
+{
+	int retorno = 0;
+
+	char firstCuit[10000];
+	char secondCuit[10000];
+
+	cliente_getCuit(pFirstElem, firstCuit);
+	cliente_getCuit(pSecondElem, secondCuit);
+
+	if(strncmp(firstCuit, secondCuit, 100) > 0)
+	{
+		retorno = 1;
+	}
+	else
+	if(strncmp(firstCuit, secondCuit, 100) < 0)
+	{
+		retorno = -1;
+	}
+	return retorno;
+}
+
+int cliente_compareById(void* pFirstElem, void* pSecondElem)
+{
+	int retorno = 0;
+
+	int firstId;
+	int secondId;
+
+	cliente_getIdCliente(pFirstElem, &firstId);
+	cliente_getIdCliente(pSecondElem, &secondId);
+
+	if(firstId > secondId)
+	{
+		retorno = 1;
+	}
+	else if(secondId > firstId)
+	{
+		retorno = -1;
+	}
+	return retorno;
+}
+
+/*
 * \brief Función que setea el ID como texto.
 * \param Cliente* puntero a cliente.
 * \param char* ID a cargar.
