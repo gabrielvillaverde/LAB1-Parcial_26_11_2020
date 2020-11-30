@@ -350,6 +350,35 @@ int utn_getStringWithNumbersAndSymbols(char *msg, char *msgError, char *pCadena,
     return retorno;
 }
 
+int utn_getCuit(char *msg, char *msgError, char *pCadena, int limite, int reintentos)
+{
+    int retorno = -1;
+    char cuit[limite];
+
+    if(msg != NULL && msgError != NULL && pCadena != NULL && limite > 0 && reintentos > 0)
+    {
+        do
+        {
+            printf("%s", msg);
+            if (myGets(cuit, limite) == 0 && utn_isCuit(cuit, limite) == 1)
+            {
+            	strncpy(pCadena, cuit, limite);
+                retorno = 0;
+                break;
+            }
+            else
+            {
+                reintentos--;
+                if(reintentos > 0)
+                {
+                    printf("\nLe quedan %d reintentos.\n", reintentos);
+                }
+            }
+        }while(retorno != 0 && reintentos > 0);
+    }
+    return retorno;
+}
+
 /**
  * \brief Función que valida si una cadena es un CUIT válido.
  * \param char* es la cadena a analizar.

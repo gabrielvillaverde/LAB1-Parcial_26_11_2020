@@ -26,6 +26,7 @@ int utn_getStringWithNumbers(char*, char*, char*, int, int);
 int utn_getStringWithOnlyNumbers(char*, char*, char*, int, int);
 int utn_getStringWithNumbersAndSymbols(char*, char*, char*, int, int);
 int myGets(char*, int);
+int utn_getCuit(char *msg, char *msgError, char *pCadena, int limite, int reintentos);
 int utn_isCuit(char* cadena, int len);
 
 #endif /* UTN_H_ */

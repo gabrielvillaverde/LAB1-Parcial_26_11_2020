@@ -199,7 +199,7 @@ int controller_addCliente(LinkedList* pArrayListaClientes)
 		if( pCliente != NULL &&
 			utn_getString("\nIngrese el nombre:\n", "\nError, ingrese un nombre válido.\n", nombre, SIZE_NOMBRE, 3) == 0 &&
 			utn_getString("\nIngrese el apellido:\n", "\nError, ingrese un apellido válido.\n", apellido, SIZE_APELLIDO, 3) == 0 &&
-			utn_getStringWithNumbersAndSymbols("\nIngrese el CUIT:\n", "\nError, ingrese un CUIT válido.\n", cuit, SIZE_CUIT, 3) == 0 &&
+			utn_getCuit("\nIngrese el CUIT:\n", "\nError, ingrese un CUIT válido.\n", cuit, SIZE_CUIT, 3) == 0 &&
 			cliente_esCuitRepetido(pArrayListaClientes, cuit) == 0)
 		{
 			cliente_setIdCliente(pCliente, generarNuevoId(pArrayListaClientes));
