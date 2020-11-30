@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "LinkedList.h"
 #include "cliente.h"
@@ -363,6 +364,7 @@ int controller_addVenta(LinkedList* pArrayListaVentas, LinkedList* pArrayListaCl
 	if(pArrayListaVentas != NULL && pArrayListaClientes != NULL)
 	{
 		pVenta = venta_new();
+		controller_imprimirClientes(pArrayListaClientes);
 		if(	utn_getInt("\nIngrese el ID del cliente al cuál se le añadirá una venta:\n", "\nError, ingrese un ID válido.\n", &idCliente, 3) == 0 &&
 			cliente_findClienteById(pArrayListaClientes, idCliente) != -1 &&
 			utn_getStringWithOnlyNumbers("\nIngrese la cantidad de afiches que quiere vender:\n", "\nError, ingrese una cantidad válida.\n", cantidadAfiches, 10000, 3) == 0 &&
@@ -376,6 +378,7 @@ int controller_addVenta(LinkedList* pArrayListaVentas, LinkedList* pArrayListaCl
 				venta_setZonaTxt(pVenta, zona) == 0 &&
 				venta_setCobrado(pVenta, 0) == 0)
 			{
+
 				if(ll_add(pArrayListaVentas, pVenta) == 0)
 				{
 					indiceCliente = cliente_findClienteById(pArrayListaClientes, pVenta->idCliente);
@@ -578,7 +581,7 @@ int controller_imprimirClientes(LinkedList* pArrayListaClientes)
 				cliente_getNombre(pCliente, nombre);
 				cliente_getApellido(pCliente, apellido);
 				cliente_getCuit(pCliente, cuit);
-				printf("ID de cliente: %s - Nombre: %s - Apellido: %s - CUIT: %s\n", idCliente, nombre, apellido, cuit);
+				printf("ID de cliente: %s | Nombre: %s | Apellido: %s | CUIT: %s\n", idCliente, nombre, apellido, cuit);
 				retorno = 0;
 			}
 		}
@@ -621,7 +624,33 @@ int controller_imprimirVentas(LinkedList* pArrayListaVentas)
 				venta_getNombreArchivo(pVenta, nombreArchivo);
 				venta_getZonaTxt(pVenta, zona);
 				venta_getCobradoTxt(pVenta, cobrado);
-				printf("ID de cliente: %s - ID de venta: %s - Cantidad de afiches: %s - Nombre de archivo: %s - ZONA: %s - Estado de cobranza: %s\n", idCliente, idVenta, cantidadAfiches, nombreArchivo, zona, cobrado);
+
+				if(strcmp(cobrado, "0") == 0)
+				{
+					sprintf(cobrado, "No cobrado");
+				}
+				else
+				if(strcmp(cobrado, "1") == 0)
+				{
+					sprintf(cobrado, "Cobrado");
+				}
+
+				if(strcmp(zona, "0") == 0)
+				{
+					sprintf(zona, "CABA");
+				}
+				else
+
+				if(strcmp(zona, "1") == 0)
+				{
+					sprintf(zona, "Sur");
+				}
+				else
+				if(strcmp(zona, "2") == 0)
+				{
+					sprintf(zona, "Oeste");
+				}
+				printf("ID de cliente: %s | ID de venta: %s | Cantidad de afiches: %s | Nombre de archivo: %s | Zona: %s | Estado de cobranza: %s\n", idCliente, idVenta, cantidadAfiches, nombreArchivo, zona, cobrado);
 			}
 		}
 	}
