@@ -98,35 +98,38 @@ Node* test_getNode(LinkedList* this, int nodeIndex)
                         ( 0) Si funciono correctamente
  *
  */
+
 static int addNode(LinkedList* this, int nodeIndex, void* pElement)
 {
 	int retorno = -1;
 
-	Node *pNewNode;
-	Node *pPrevNode;
+	Node *pNewNode = NULL;
+	Node *pPrevNode = NULL;
 
 	if(this != NULL)
 	{
 		if(nodeIndex >= 0 && nodeIndex <= ll_len(this)) // nodeIndex <= al tamaño de la LinkedList porque puede ser que agregue uno al final.
 		{
-			pNewNode = (Node*) malloc(sizeof(Node)); // Reservo memoria para un nuevo nodo.
-
-			pNewNode->pElement = pElement; // Guardo el puntero al elemento dentro del nodo. El elemento que recibo como parámetro será el pElement del nuevo nodo.
-			pNewNode->pNextNode = NULL; // Indico que el campo que apunta al próximo nodo de la lista sea NULL.
-
-			if(nodeIndex == 0) // Si estoy en la primera posición...
+			pNewNode = (Node*) malloc (sizeof(Node)); // Reservo memoria para un nuevo nodo.
+			if(pNewNode != NULL)
 			{
-				pNewNode->pNextNode = this->pFirstNode; // Hago que el nuevo nodo apunte a la posición 0 (al nodo que estaba antes de que yo agregue el nuevo).
-				this->pFirstNode = pNewNode; // Hago que en la LL, el puntero al primer nodo apunte al nuevo nodo que agrego. Min: 3:06:06
+				pNewNode->pElement = pElement; // Guardo el puntero al elemento dentro del nodo. El elemento que recibo como parámetro será el pElement del nuevo nodo.
+				pNewNode->pNextNode = NULL; // Indico que el campo que apunta al próximo nodo de la lista sea NULL.
+
+				if(nodeIndex == 0) // Si estoy en la primera posición...
+				{
+					pNewNode->pNextNode = this->pFirstNode; // Hago que el nuevo nodo apunte a la posición 0 (al nodo que estaba antes de que yo agregue el nuevo).
+					this->pFirstNode = pNewNode; // Hago que en la LL, el puntero al primer nodo apunte al nuevo nodo que agrego. Min: 3:06:06
+				}
+				else // Si estoy en cualquier otra posición que no sea la primera (el medio o el final).
+				{
+					pPrevNode = getNode(this, nodeIndex - 1); // Me guardo en pPrevNode el nodo previo al índice que le paso por argumento, que es la posición donde quiero agregar uno.
+					pNewNode->pNextNode = pPrevNode->pNextNode; // Estoy haciendo que el nodo nuevo apunte hacia donde estaba apuntando el nodo previo, de lo contrario la lista se rompería. Por ejemplo, si agrego un nodo entre el 1 y el 2, ese nuevo nodo que agregué debe apuntar hacia donde apuntaba el 1 (que apuntaba al 2).
+					pPrevNode->pNextNode = pNewNode; // El siguiente del nodo previo, será el nodo nuevo (el que cree arriba).
+				}
+				this->size++; // Al agregar uno nuevo, aumento el size de la LinkedList, en se size se guardan la cantidad de nodos que existen.
+				retorno = 0;
 			}
-			else // Si estoy en cualquier otra posición que no sea la primera (el medio o el final).
-			{
-				pPrevNode = getNode(this, nodeIndex - 1); // Me guardo en pPrevNode el nodo previo al índice que le paso por argumento, que es la posición donde quiero agregar uno.
-				pNewNode->pNextNode = pPrevNode->pNextNode; // Estoy haciendo que el nodo nuevo apunte hacia donde estaba apuntando el nodo previo, de lo contrario la lista se rompería. Por ejemplo, si agrego un nodo entre el 1 y el 2, ese nuevo nodo que agregué debe apuntar hacia donde apuntaba el 1 (que apuntaba al 2).
-				pPrevNode->pNextNode = pNewNode; // El siguiente del nodo previo, será el nodo nuevo (el que cree arriba).
-			}
-			this->size++; // Al agregar uno nuevo, aumento el size de la LinkedList, en se size se guardan la cantidad de nodos que existen.
-			retorno = 0;
 		}
 	}
 	return retorno;
@@ -229,10 +232,9 @@ int ll_set(LinkedList* this, int index, void* pElement)
                         ( 0) Si funciono correctamente
  *
  */
-
+// Elimina NODOS de la lista.
 int ll_remove(LinkedList* this, int index)
 {
-	// Elimina NODOS de la lista.
     int retorno = -1;
 
     Node* pNodeToRemove = NULL;
@@ -568,9 +570,8 @@ int ll_sort(LinkedList* this, int (*pFunc)(void*, void*), int order)
 	return retorno;
 }
 
-// Realiza una operación a cada elemento de la lista.
 /**
- * \brief Recorre la lista, analizando cada elemento para que se realice una tarea.
+ * \brief Recorre la lista y realiza una operación para cada elemento.
  *
  * \this Puntero al espacio de memoria donde se empieza la lista.
  * \pFuncGenerica Puntero al espacio de memoria donde comienza el código de dicha función.
@@ -599,6 +600,15 @@ int ll_map(LinkedList* this, int (*pFunc)(void*))
 	return retorno;
 }
 
+/**
+ * \brief Recorre la lista y realiza una operación para cada elemento.
+ *
+ * \this Puntero al espacio de memoria donde se empieza la lista.
+ * \pFunc Puntero al espacio de memoria donde comienza el código de dicha función.
+ * \return Retorna -1 los parametros recibidos son NULL o si al menos un elemento no cumple con el criterio establecido.
+ * 				   Retorna 0 si ok.
+ *
+ */
 int ll_map2(LinkedList* this, int (*pFunc)(void*, char*), void* argumento)
 {
 	int retorno = -1;
@@ -620,7 +630,15 @@ int ll_map2(LinkedList* this, int (*pFunc)(void*, char*), void* argumento)
 	return retorno;
 }
 
-// Recorro la lista original y genero una nueva lista en base a una condición
+/**
+ * \brief Recorre la lista original y genera una nueva lista en base a una condición
+ *
+ * \this Puntero al espacio de memoria donde se empieza la lista.
+ * \pFunc Puntero al espacio de memoria donde comienza el código de dicha función.
+ * \return Retorna -1 los parametros recibidos son NULL o si al menos un elemento no cumple con el criterio establecido.
+ * 				   Retorna 0 si ok.
+ *
+ */
 LinkedList* ll_filter(LinkedList* this, int (*pFunc)(void*))
 {
 	LinkedList* pFilteredList = NULL;
@@ -629,7 +647,7 @@ LinkedList* ll_filter(LinkedList* this, int (*pFunc)(void*))
 
 	if(this != NULL && pFunc != NULL)
 	{
-		pFilteredList = ll_newLinkedList(); // Devuelvo una lista nueva
+		pFilteredList = ll_newLinkedList();
 		if(pFilteredList != NULL)
 		{
 			for(int i = 0 ; i < len ; i++) // Realizo un recorrido de la lista original.
@@ -645,7 +663,16 @@ LinkedList* ll_filter(LinkedList* this, int (*pFunc)(void*))
     return pFilteredList;
 }
 
-LinkedList* ll_filter2(LinkedList* this, int (*pFunc)(void*,void*), void* argumento)
+/**
+ * \brief Recorre la lista original y genera una nueva lista en base a una condición
+ *
+ * \this Puntero al espacio de memoria donde se empieza la lista.
+ * \pFunc Puntero al espacio de memoria donde comienza el código de dicha función.
+ * \return Retorna -1 los parametros recibidos son NULL o si al menos un elemento no cumple con el criterio establecido.
+ * 				   Retorna 0 si ok.
+ *
+ */
+LinkedList* ll_filter2(LinkedList* this, int (*pFunc)(void*, void*), void* argumento)
 {
 	LinkedList* pFilteredList = NULL;
 	void* pElement;
@@ -653,10 +680,10 @@ LinkedList* ll_filter2(LinkedList* this, int (*pFunc)(void*,void*), void* argume
 
 	if(this != NULL && pFunc != NULL)
 	{
-		pFilteredList = ll_newLinkedList(); // Devuelvo una lista nueva
+		pFilteredList = ll_newLinkedList();
 		if(pFilteredList != NULL)
 		{
-			for(int i = 0 ; i < len ; i++) // Realizo un recorrido de la lista original.
+			for(int i = 0 ; i < len ; i++)
 			{
 				pElement = ll_get(this, i);
 				if(pFunc(pElement, argumento)) // Si la función genérica devuelve TRUE...
@@ -669,6 +696,15 @@ LinkedList* ll_filter2(LinkedList* this, int (*pFunc)(void*,void*), void* argume
     return pFilteredList;
 }
 
+/**
+ * \brief Recorre la lista original y genera una nueva lista en base a una condición
+ *
+ * \this Puntero al espacio de memoria donde se empieza la lista.
+ * \pFuncGenerica Puntero al espacio de memoria donde comienza el código de dicha función.
+ * \return Retorna -1 los parametros recibidos son NULL o si al menos un elemento no cumple con el criterio establecido.
+ * 				   Retorna 0 si ok.
+ *
+ */
 LinkedList* ll_filter3(LinkedList* this, int (*pFunc)(void*, void*, void*), void* argumentoUno, void* argumentoDos)
 {
 	LinkedList* pFilteredList = NULL;
@@ -677,10 +713,10 @@ LinkedList* ll_filter3(LinkedList* this, int (*pFunc)(void*, void*, void*), void
 
 	if(this != NULL && pFunc != NULL)
 	{
-		pFilteredList = ll_newLinkedList(); // Devuelvo una lista nueva
+		pFilteredList = ll_newLinkedList();
 		if(pFilteredList != NULL)
 		{
-			for(int i = 0 ; i < len ; i++) // Realizo un recorrido de la lista original.
+			for(int i = 0 ; i < len ; i++)
 			{
 				pElement = ll_get(this, i);
 				if(pFunc(pElement, argumentoUno, argumentoDos)) // Si la función genérica devuelve TRUE...
@@ -693,65 +729,55 @@ LinkedList* ll_filter3(LinkedList* this, int (*pFunc)(void*, void*, void*), void
     return pFilteredList;
 }
 
-
-
-int ll_reduce(LinkedList* this, int (*pFunc)(void*, int, int))
+/** \brief Recorre la lista y la reduce a un número del tipo entero, usando la función criterio recibida como parámetro.
+ * \param this LinkedList* Puntero a la lista
+ * \param int (*pFunc) Puntero a la función criterio
+ * \return int Retorna  (-1) Error: si el puntero a la listas es NULL
+                        o el valor acumulado.
+ */
+int ll_reduceInt(LinkedList* this, int (*pFunc)(void*))
 {
-	void* pElement = NULL;
-	int retorno = 0;
+	int retorno = -1;
+	void* pElement;
+	int acum = 0;
 
 	if(this != NULL && pFunc != NULL)
 	{
 		for(int i = 0 ; i < ll_len(this) ; i++)
 		{
 			pElement = ll_get(this, i);
-			retorno = pFunc(pElement, retorno, i);
+			if(pElement != NULL)
+			{
+				acum = acum + pFunc(pElement);
+				retorno = acum;
+			}
 		}
 	}
 	return retorno;
 }
 
-/** \brief Recorre la lista y va acumulando valores del tipo int.
+/** \brief Recorre la lista y la reduce a un número del tipo flotante, usando la función criterio recibida como parámetro.
  * \param this LinkedList* Puntero a la lista
  * \param int (*pFunc) Puntero a la función criterio
  * \return int Retorna  (-1) Error: si el puntero a la listas es NULL
-                        ( 0) Si ok
- */
-int ll_reduceInt(LinkedList* this, int (*pFunc)(void*,void*), void* argumento)
-{
-	int retorno = 0;
-
-	void* pElement;
-
-	if(this != NULL && pFunc != NULL)
-	{
-		for (int i = 0 ; i < ll_len(this) ; i++)
-		{
-			pElement = ll_get(this, i);
-			retorno += pFunc(pElement, argumento);
-		}
-	}
-	return retorno;
-}
-
-/** \brief Recorre la lista y va acumulando valores del tipo float.
- * \param this LinkedList* Puntero a la lista
- * \param int (*pFunc) Puntero a la función criterio
- * \return int Retorna  (-1) Error: si el puntero a la listas es NULL
-                        ( 0) Si ok
+                        o el valor acumulado.
  */
 float ll_reduceFloat(LinkedList* this, float (*pFunc)(void*))
 {
 	int retorno = -1;
-
 	void* pElement;
+	float acum = 0;
 
 	if(this != NULL && pFunc != NULL)
 	{
-		for (int i = 0 ; i < ll_len(this) ; i++)
+		for(int i = 0 ; i < ll_len(this) ; i++)
 		{
 			pElement = ll_get(this, i);
-			retorno += pFunc(pElement);
+			if(pElement != NULL)
+			{
+				acum = acum + pFunc(pElement);
+				retorno = acum;
+			}
 		}
 	}
 	return retorno;
@@ -762,13 +788,13 @@ float ll_reduceFloat(LinkedList* this, float (*pFunc)(void*))
  * \param this LinkedList* Puntero a la lista
  * \param int* pFuncArgumento Función criterio que determina qué particularidad tienen los elementos que voy a contar.
  * \return int Retorna  -1 si el puntero a la lista es NULL
- *                       o la cantidad total acumulada si salió todo ok.
+ *                       o la cantidad total acumulada si salió todo OK.
  */
-int ll_count(LinkedList* this, int(*pFunc)(void*))
+int ll_count(LinkedList* this, int (*pFunc)(void*))
 {
+	int retorno = -1;
 	void* pElement;
 	int acum = 0;
-	int retorno = -1;
 
 	if(this != NULL && pFunc != NULL)
 	{

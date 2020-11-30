@@ -32,7 +32,7 @@ int main(void)
 
 	if(controller_loadListaClientesFromText("clientes.csv", listaClientes) == 0)
 	{
-		printf("\nArchivo de clientes cargado correctamente.\n\n");
+		printf("Archivo de clientes cargado correctamente.");
 	}
 
 	if(controller_loadListaVentasFromText("ventas.csv", listaVentas) == 0)

@@ -24,7 +24,7 @@ static int generarNuevoIdVentas(LinkedList* pArrayListaVentas);
 static int encontrarMaximoIdVentas(LinkedList* pArrayListaVentas);
 
 /*
-* \brief Función que carga los datos de los clientes desde el archivo clientes.csv (modo texto).
+* \brief Función que carga los datos de los clientes desde el archivo pasado como parámetro (modo texto).
 * \param path char* es la ruta del archivo.
 * \param pArrayListaClientes LinkedList* es el puntero al array de clientes.
 * \return (-1) Error (0) todo OK
@@ -38,6 +38,7 @@ int controller_loadListaClientesFromText(char* path, LinkedList* pArrayListaClie
 	if(path != NULL && pArrayListaClientes != NULL)
 	{
 		pFile = fopen(path, "r");
+
 		if(pFile != NULL)
 		{
 			if(parser_leerListaClientesFromText(pFile, pArrayListaClientes) == 0)
@@ -54,6 +55,12 @@ int controller_loadListaClientesFromText(char* path, LinkedList* pArrayListaClie
     return retorno;
 }
 
+/*
+* \brief Función que carga los datos de las ventas desde el archivo pasado como parámetro (modo texto).
+* \param path char* es la ruta del archivo.
+* \param pArrayListaVentas LinkedList* es el puntero al array de ventas.
+* \return (-1) Error (0) todo OK
+*/
 int controller_loadListaVentasFromText(char* path, LinkedList* pArrayListaVentas)
 {
 	int retorno = -1;
@@ -80,7 +87,7 @@ int controller_loadListaVentasFromText(char* path, LinkedList* pArrayListaVentas
 }
 
 /*
-* \brief Función que guarda los datos de los clientes en el archivo clientes.csv (modo texto).
+* \brief Función que guarda los datos de los clientes en el archivo pasado como parámetro (modo texto).
 * \param path char* es la ruta del archivo.
 * \param pArrayListaClientes LinkedList* es el puntero al array de clientes.
 * \return (-1) Error (0) todo OK
@@ -124,7 +131,7 @@ int controller_saveClienteAsText(char* path, LinkedList* pArrayListaClientes)
 }
 
 /*
-* \brief Función que guarda los datos de las ventas en el archivo ventas.csv (modo texto).
+* \brief Función que guarda los datos de las ventas en el archivo pasado como parámetro (modo texto).
 * \param path char* es la ruta del archivo.
 * \param pArrayListaVentas LinkedList* es el puntero al array de ventas.
 * \return (-1) Error (0) todo OK
@@ -157,7 +164,7 @@ int controller_saveVentasAsText(char* path, LinkedList* pArrayListaVentas)
 					   venta_getIdVentaTxt(pVenta, idVenta) == 0 &&
 					   venta_getCantidadAfichesTxt(pVenta, cantidadAfiches) == 0 &&
 					   venta_getNombreArchivo(pVenta, nombreArchivo) == 0 &&
-					   venta_getZona(pVenta, zona) == 0 &&
+					   venta_getZonaTxt(pVenta, zona) == 0 &&
 					   venta_getCobradoTxt(pVenta, cobrado) == 0)
 					{
 						fprintf(pFile, "%s,%s,%s,%s,%s,%s\n", idCliente, idVenta, cantidadAfiches, nombreArchivo, zona, cobrado);
@@ -176,7 +183,6 @@ int controller_saveVentasAsText(char* path, LinkedList* pArrayListaVentas)
 * \param pArrayListaClientes LinkedList* es el puntero al array de clientes.
 * \return (-1) Error (0) todo OK
 */
-
 int controller_addCliente(LinkedList* pArrayListaClientes)
 {
 	int retorno = -1;
@@ -215,11 +221,10 @@ int controller_addCliente(LinkedList* pArrayListaClientes)
 }
 
 /*
-* \brief Función que da de baja al empleado junto con todas sus ventas
-* \param pArrayListEmployee LinkedList* es el puntero al array de empleados.
+* \brief Función que da de baja al cliente.
+* \param pArrayListaClientes LinkedList* es el puntero al array de clientes.
 * \return (-1) Error (0) todo OK
 */
-
 int controller_removeCliente(LinkedList* pArrayListaClientes)
 {
 	int retorno = -1;
@@ -248,8 +253,8 @@ int controller_removeCliente(LinkedList* pArrayListaClientes)
 				{
 					if(opcion)
 					{
-						cliente_delete(pCliente);
-						ll_remove(pArrayListaClientes, indiceClienteEliminar);
+						cliente_delete(pCliente); // Libero el espacio de memoria que ocupaba ese cliente.
+						ll_remove(pArrayListaClientes, indiceClienteEliminar); // Elimino el nodo de la LinkedList que correspondía a ese cliente.
 						retorno = 0;
 					}
 					else
@@ -261,13 +266,19 @@ int controller_removeCliente(LinkedList* pArrayListaClientes)
 		}
 		else
 		{
-			printf("\nID del cliente no existe.\n");
+			printf("\nEl ID del cliente no existe.\n");
 		}
 	}
 
 	return retorno;
 }
 
+/*
+* \brief Función que da de baja al cliente junto con todas sus ventas.
+* \param pArrayListaClientes LinkedList* es el puntero al array de clientes.
+* * \param pArrayListaVentas LinkedList* es el puntero al array de ventas.
+* \return (-1) Error (0) todo OK
+*/
 int controller_removeClienteConTodasSusVentas(LinkedList* pArrayListaClientes, LinkedList* pArrayListaVentas)
 {
 	int retorno = -1;
@@ -277,12 +288,15 @@ int controller_removeClienteConTodasSusVentas(LinkedList* pArrayListaClientes, L
 
 	int idCliente;
 	int idClienteAuxiliar;
-	int idVentaAuxiliar;
+	//int idVentaAuxiliar;
 	int indiceClienteEliminar;
 	int opcion;
 
 	if(pArrayListaVentas != NULL && pArrayListaClientes != NULL)
 	{
+		printf("\nA continuación se listan los ID de clientes que tienen ventas registradas en el sistema:\n");
+		controller_imprimirVentas(pArrayListaVentas);
+
 		if( utn_getInt("\nIngrese el ID del cliente a borrar:\n", "\nError, ingrese un ID válido.\n", &idCliente, 3) == 0 &&
 					cliente_findClienteById(pArrayListaClientes, idCliente) != -1)
 		{
@@ -299,12 +313,12 @@ int controller_removeClienteConTodasSusVentas(LinkedList* pArrayListaClientes, L
 					cliente_delete(pCliente);
 					ll_remove(pArrayListaClientes, indiceClienteEliminar);
 
-					for(int i = 0; i < ll_len(pArrayListaVentas) ; i++)
+					for(int i = 0 ; i < ll_len(pArrayListaVentas) ; i++)
 					{
 						pVenta = ll_get(pArrayListaVentas, i);
 
 						venta_getIdCliente(pVenta, &idClienteAuxiliar);
-						venta_getIdVenta(pVenta, &idVentaAuxiliar);
+						//venta_getIdVenta(pVenta, &idVentaAuxiliar);
 
 						if(idClienteAuxiliar == idCliente)
 						{
@@ -315,18 +329,32 @@ int controller_removeClienteConTodasSusVentas(LinkedList* pArrayListaClientes, L
 					retorno = 0;
 				}
 			}
+			printf("\nLa lista quedó así:\n");
+			controller_imprimirVentas(pArrayListaVentas);
+		}
+		else
+		{
+			printf("\nEl ID es inexistente.\n");
 		}
 	}
 	return retorno;
 }
 
+/*
+* \brief Función que se encarga de dar de alta una venta asociada a un ID de cliente existente y la añade al array de ventas.
+* \param pArrayListaVentas LinkedList* es el puntero al array de ventas.
+* \param pArrayListaClientes LinkedList* es el puntero al array de clientes.
+* \return (-1) Error (0) todo OK
+*/
 int controller_addVenta(LinkedList* pArrayListaVentas, LinkedList* pArrayListaClientes)
 {
 	int retorno = -1;
 
 	Venta* pVenta;
+	Cliente* pCliente;
 
 	int idCliente;
+	int indiceCliente;
 	char cantidadAfiches[10000];
 	char nombreArchivo[10000];
 	char zona[10000];
@@ -337,21 +365,22 @@ int controller_addVenta(LinkedList* pArrayListaVentas, LinkedList* pArrayListaCl
 		pVenta = venta_new();
 		if(	utn_getInt("\nIngrese el ID del cliente al cuál se le añadirá una venta:\n", "\nError, ingrese un ID válido.\n", &idCliente, 3) == 0 &&
 			cliente_findClienteById(pArrayListaClientes, idCliente) != -1 &&
-			utn_getStringWithOnlyNumbers("\nIngrese la cantidad de afiches que quiere vender:\n", "\nError, ingrese una cantidad válida.\n", cantidadAfiches, 1000, 3) == 0 &&
-			utn_getStringWithNumbersAndSymbols("\nIngrese el nombre del archivo con la imagen del afiche:\n", "\nError, ingrese una cantidad válida.\n", nombreArchivo, SIZE_NOMBRE_ARCHIVO, 3) == 0 &&
+			utn_getStringWithOnlyNumbers("\nIngrese la cantidad de afiches que quiere vender:\n", "\nError, ingrese una cantidad válida.\n", cantidadAfiches, 10000, 3) == 0 &&
+			utn_getStringWithNumbersAndSymbols("\nIngrese el nombre del archivo con la imagen del afiche:\n", "\nError, ingrese una cantidad válida.\n", nombreArchivo, 10000, 3) == 0 &&
 			utn_getStringWithOnlyNumbers("\nIngrese la zona: [0] CABA - [1] ZONA SUR  - [2] ZONA OESTE\n" , "\nError, ingrese una zona válida.\n", zona, 10000, 3) == 0)
 		{
-			if(
-			venta_setIdCliente(pVenta, idCliente) == 0 &&
-			venta_setIdVenta(pVenta, generarNuevoIdVentas(pArrayListaVentas)) == 0 &&
-			venta_setCantidadAfichesTxt(pVenta, cantidadAfiches) == 0 &&
-			venta_setNombreArchivo(pVenta, nombreArchivo) == 0 &&
-			venta_setZona(pVenta, zona) == 0 &&
-			venta_setCobrado(pVenta, 0) == 0)
+			if(	venta_setIdCliente(pVenta, idCliente) == 0 &&
+				venta_setIdVenta(pVenta, generarNuevoIdVentas(pArrayListaVentas)) == 0 &&
+				venta_setCantidadAfichesTxt(pVenta, cantidadAfiches) == 0 &&
+				venta_setNombreArchivo(pVenta, nombreArchivo) == 0 &&
+				venta_setZonaTxt(pVenta, zona) == 0 &&
+				venta_setCobrado(pVenta, 0) == 0)
 			{
 				if(ll_add(pArrayListaVentas, pVenta) == 0)
 				{
-					printf("\nID de la venta generada: %d", pVenta->idVenta);
+					indiceCliente = cliente_findClienteById(pArrayListaClientes, pVenta->idCliente);
+					pCliente = ll_get(pArrayListaClientes, indiceCliente);
+					printf("\nEl ID de la venta generada es: %d. El cliente al que pertenece la venta generada es %s %s y su CUIT es %s", pVenta->idVenta, pCliente->nombre, pCliente->apellido, pCliente->cuit);
 					retorno = 0;
 				}
 			}
@@ -364,6 +393,12 @@ int controller_addVenta(LinkedList* pArrayListaVentas, LinkedList* pArrayListaCl
 	return retorno;
 }
 
+/*
+* \brief Función que se encarga de modificar una venta.
+* \param pArrayListaVentas LinkedList* es el puntero al array de ventas.
+* \param pArrayListaClientes LinkedList* es el puntero al array de clientes.
+* \return (-1) Error (0) todo OK
+*/
 int controller_modificarVentas(LinkedList* pArrayListaVentas, LinkedList* pArrayListaClientes)
 {
 	int retorno = -1;
@@ -373,7 +408,7 @@ int controller_modificarVentas(LinkedList* pArrayListaVentas, LinkedList* pArray
 	Venta* pVenta = NULL;
 	Cliente* pCliente = NULL;
 
-	int idVenta;
+	int idVentaModificar;
 	int indiceVentaModificar;
 	int indiceCliente;
 
@@ -383,28 +418,29 @@ int controller_modificarVentas(LinkedList* pArrayListaVentas, LinkedList* pArray
 	char nombreArchivo[10000];
 	char zona[10000];
 
-	if(pArrayListaVentas != NULL)
+	if(pArrayListaVentas != NULL && pArrayListaClientes != NULL)
 	{
 		pListaFiltrada = ll_filter(pArrayListaVentas, venta_chequearEstadoNoCobrado);
 
 		if(pListaFiltrada != NULL)
 		{
 			printf("\nEstas son las ventas que aún no se han cobrado:\n");
+
 			if(controller_imprimirVentas(pListaFiltrada) == 0)
 			{
-				if( utn_getInt("\nIngrese el ID de la venta a modificar:\n", "\nError, ingrese un ID válido.\n", &idVenta, 3) == 0 &&
-					venta_findVentaById(pArrayListaVentas, idVenta) != -1)
+				if( utn_getInt("\nIngrese el ID de la venta a modificar:\n", "\nError, ingrese un ID válido.\n", &idVentaModificar, 3) == 0 &&
+					venta_findVentaByIdAndCheckEstadoCobranza(pArrayListaVentas, idVentaModificar, 0) != -1)
 				{
-					indiceVentaModificar = venta_findVentaById(pArrayListaVentas, idVenta);
+					indiceVentaModificar = venta_findVentaById(pArrayListaVentas, idVentaModificar);
 					pVenta = ll_get(pArrayListaVentas, indiceVentaModificar);
 
 					indiceCliente = cliente_findClienteById(pArrayListaClientes, pVenta->idCliente);
 					pCliente = ll_get(pArrayListaClientes, indiceCliente);
-
 					printf("\nEl cliente al que pertenece la venta es %s %s y su CUIT es %s", pCliente->nombre, pCliente->apellido, pCliente->cuit);
+
 					do
 					{
-						if(utn_getInt("\nElija un campo a modificar: [1] Cantidad de afiches - [2] Nombre del archivo - [3] Zona - [4] Salir\n", "\nError, ingrese un número válido.\n", &opcion, 3) == 0)
+						if(utn_getIntConMinMax("\nElija un campo a modificar: [1] Cantidad de afiches - [2] Nombre del archivo - [3] Zona - [4] Salir\n", "\nError, ingrese un número válido.\n", &opcion, 1, 4, 3) == 0)
 						{
 							switch(opcion)
 							{
@@ -429,7 +465,7 @@ int controller_modificarVentas(LinkedList* pArrayListaVentas, LinkedList* pArray
 							case 3:
 								if(utn_getStringWithOnlyNumbers("\nIngrese la nueva: [0] CABA - [1] ZONA SUR  - [2] ZONA OESTE\n" , "\nError, ingrese una zona válida.\n", zona, 10000, 3) == 0)
 								{
-									if(venta_setZona(pVenta, zona) == 0)
+									if(venta_setZonaTxt(pVenta, zona) == 0)
 									{
 										printf("\nLa zona modificada correctamente.\n");
 									}
@@ -442,7 +478,69 @@ int controller_modificarVentas(LinkedList* pArrayListaVentas, LinkedList* pArray
 				}
 				else
 				{
-					printf("\nEl ID de la venta no existe.\n");
+					printf("\nEl ID de la venta no existe o la venta ya está cobrada y por lo tanto no se puede modificar.\n");
+				}
+			}
+		}
+	}
+	return retorno;
+}
+
+/*
+* \brief Función que se encarga de cobrar una venta.
+* \param pArrayListaVentas LinkedList* es el puntero al array de ventas.
+* \param pArrayListaClientes LinkedList* es el puntero al array de clientes.
+* \return (-1) Error (0) todo OK
+*/
+int controller_cobrarVentas(LinkedList* pArrayListaVentas, LinkedList* pArrayListaClientes)
+{
+	int retorno = -1;
+
+	LinkedList* pListaFiltrada;
+	Venta* pVenta = NULL;
+	Cliente* pCliente = NULL;
+
+	int idVentaCobrar;
+	int indiceVenta;
+	int indiceCliente;
+
+	int opcion;
+
+	if(pArrayListaVentas != NULL && pArrayListaClientes != NULL)
+	{
+		pListaFiltrada = ll_filter(pArrayListaVentas, venta_chequearEstadoNoCobrado);
+
+		if(pListaFiltrada != NULL)
+		{
+			printf("\nEstas son las ventas que aún no se han cobrado:\n");
+
+			if(controller_imprimirVentas(pListaFiltrada) == 0)
+			{
+				if( utn_getInt("\nIngrese el ID de la venta que quiere cobrar:\n", "\nError, ingrese un ID válido.\n", &idVentaCobrar, 3) == 0 &&
+					venta_findVentaByIdAndCheckEstadoCobranza(pArrayListaVentas, idVentaCobrar, 0) != -1)
+				{
+					indiceVenta = venta_findVentaById(pArrayListaVentas, idVentaCobrar);
+					pVenta = ll_get(pArrayListaVentas, indiceVenta);
+
+					indiceCliente = cliente_findClienteById(pArrayListaClientes, pVenta->idCliente);
+					pCliente = ll_get(pArrayListaClientes, indiceCliente);
+
+					printf("\nEl cliente al que pertenece la venta es %s %s y su CUIT es %s", pCliente->nombre, pCliente->apellido, pCliente->cuit);
+					do
+					{
+						if(utn_getInt("\n¿Desea cobrar la venta?: [1] SI - [2] NO\n", "\nError, ingrese una opción válida.\n", &opcion, 3) == 0)
+						{
+							if(opcion == 1 && venta_setCobrado(pVenta, 1) == 0)
+							{
+								retorno = 0;
+							}
+							break;
+						}
+					}while(opcion != 1);
+				}
+				else
+				{
+					printf("\nEl ID de la venta no existe o la venta ya está cobrada y por lo tanto no se puede cobrar.\n");
 				}
 			}
 		}
@@ -473,17 +571,26 @@ int controller_imprimirClientes(LinkedList* pArrayListaClientes)
 		for(int i = 0 ; i < ll_len(pArrayListaClientes) ; i++)
 		{
 			pCliente = ll_get(pArrayListaClientes, i);
-			cliente_getIdClienteTxt(pCliente, idCliente);
-			cliente_getNombre(pCliente, nombre);
-			cliente_getApellido(pCliente, apellido);
-			cliente_getCuit(pCliente, cuit);
-			printf("ID de cliente: %s - Nombre: %s - Apellido: %s - CUIT: %s\n", idCliente, nombre, apellido, cuit);
-			retorno = 0;
+
+			if(pCliente != NULL)
+			{
+				cliente_getIdClienteTxt(pCliente, idCliente);
+				cliente_getNombre(pCliente, nombre);
+				cliente_getApellido(pCliente, apellido);
+				cliente_getCuit(pCliente, cuit);
+				printf("ID de cliente: %s - Nombre: %s - Apellido: %s - CUIT: %s\n", idCliente, nombre, apellido, cuit);
+				retorno = 0;
+			}
 		}
 	}
     return retorno;
 }
 
+/*
+* \brief Función que imprime las ventas
+* \param pArrayListaVentas LinkedList* es el puntero al array de ventas.
+* \return (-1) Error (0) todo OK
+*/
 int controller_imprimirVentas(LinkedList* pArrayListaVentas)
 {
 	int retorno = -1;
@@ -505,68 +612,29 @@ int controller_imprimirVentas(LinkedList* pArrayListaVentas)
 		for(int i = 0 ; i < ll_len(pArrayListaVentas) ; i++)
 		{
 			pVenta = ll_get(pArrayListaVentas, i);
-			venta_getIdClienteTxt(pVenta, idCliente);
-			venta_getIdVentaTxt(pVenta, idVenta);
-			venta_getCantidadAfichesTxt(pVenta, cantidadAfiches);
-			venta_getNombreArchivo(pVenta, nombreArchivo);
-			venta_getZona(pVenta, zona);
-			venta_getCobradoTxt(pVenta, cobrado);
-			printf("ID de cliente: %s - ID de venta: %s - Cantidad de afiches: %s - Nombre de archivo: %s - ZONA: %s - Estado de cobranza: %s\n", idCliente, idVenta, cantidadAfiches, nombreArchivo, zona, cobrado);
+
+			if(pVenta != NULL)
+			{
+				venta_getIdClienteTxt(pVenta, idCliente);
+				venta_getIdVentaTxt(pVenta, idVenta);
+				venta_getCantidadAfichesTxt(pVenta, cantidadAfiches);
+				venta_getNombreArchivo(pVenta, nombreArchivo);
+				venta_getZonaTxt(pVenta, zona);
+				venta_getCobradoTxt(pVenta, cobrado);
+				printf("ID de cliente: %s - ID de venta: %s - Cantidad de afiches: %s - Nombre de archivo: %s - ZONA: %s - Estado de cobranza: %s\n", idCliente, idVenta, cantidadAfiches, nombreArchivo, zona, cobrado);
+			}
 		}
 	}
     return retorno;
 }
 
-int controller_cobrarVentas(LinkedList* pArrayListaVentas, LinkedList* pArrayListaClientes)
-{
-	int retorno = -1;
-
-	LinkedList* pListaFiltrada;
-	Venta* pVenta = NULL;
-	Cliente* pCliente = NULL;
-
-	int idVenta;
-	int indiceVenta;
-	int indiceCliente;
-
-	int opcion;
-
-	if(pArrayListaVentas != NULL && pArrayListaClientes != NULL)
-	{
-		pListaFiltrada = ll_filter(pArrayListaVentas, venta_chequearEstadoNoCobrado);
-
-		if(pListaFiltrada != NULL)
-		{
-			printf("\nEstas son las ventas que aún no se han cobrado:\n");
-			if(controller_imprimirVentas(pListaFiltrada) == 0)
-			{
-				if(utn_getInt("\nIngrese el ID de la venta:\n", "\nError, ingrese un ID válido.\n", &idVenta, 3) == 0)
-				{
-					indiceVenta = venta_findVentaById(pArrayListaVentas, idVenta);
-					pVenta = ll_get(pArrayListaVentas, indiceVenta);
-
-					indiceCliente = cliente_findClienteById(pArrayListaClientes, pVenta->idCliente);
-					pCliente = ll_get(pArrayListaClientes, indiceCliente);
-
-					printf("\nEl cliente al que pertenece la venta es %s %s y su CUIT es %s", pCliente->nombre, pCliente->apellido, pCliente->cuit);
-					do
-					{
-						if(utn_getInt("\n¿Desea cobrar la venta?: [1] SI - [2] NO\n", "\nError, ingrese una opción válida.\n", &opcion, 3) == 0)
-						{
-							if(opcion == 1 && venta_setCobrado(pVenta, 1) == 0)
-							{
-								retorno = 0;
-							}
-							break;
-						}
-					}while(opcion != 1);
-				}
-			}
-		}
-	}
-	return retorno;
-}
-
+/*
+* \brief Función que genera un archivo con un informe de cobros, que contiene la lista de clientes junto con la cantidad de ventas cobradas que posee cada uno.
+* \param pArrayListaClientes LinkedList* es el puntero al array de clientes.
+* \param pArrayListaVentas LinkedList* es el puntero al array de ventas.
+* \param int es el estado de cobranza que recibe como parámetro.
+* \return (-1) Error (0) todo OK
+*/
 int controller_generarInformeDeCobros(char* path, LinkedList* pArrayListaClientes, LinkedList* pArrayListaVentas, int estado)
 {
 	int retorno = -1;
@@ -580,6 +648,7 @@ int controller_generarInformeDeCobros(char* path, LinkedList* pArrayListaCliente
 	int cantidadVentas;
 
 	pFile = fopen(path, "w");
+
 	if(pFile != NULL)
 	{
 		if(pArrayListaClientes != NULL && pArrayListaVentas != NULL)
@@ -587,13 +656,22 @@ int controller_generarInformeDeCobros(char* path, LinkedList* pArrayListaCliente
 			for(int i = 0 ; i < ll_len(pArrayListaClientes) ; i++)
 			{
 				pCliente = ll_get(pArrayListaClientes, i);
+
 				if(pCliente != NULL)
 				{
 					cliente_getIdCliente(pCliente, &idCliente);
+
 					pListaFiltrada = ll_filter3(pArrayListaVentas, venta_chequearIdYEstadoCobranza, &idCliente, &estado);
-					cantidadVentas = ll_len(pListaFiltrada);
-					controller_saveClienteConCantidadDeVentasAsText(pFile, pCliente, cantidadVentas);
-					retorno = 0;
+
+					if(pListaFiltrada != NULL)
+					{
+						cantidadVentas = ll_len(pListaFiltrada);
+
+						if(controller_saveClienteConCantidadDeVentasAsText(pFile, pCliente, cantidadVentas) == 0)
+						{
+							retorno = 0;
+						}
+					}
 				}
 			}
 		}
@@ -602,6 +680,12 @@ int controller_generarInformeDeCobros(char* path, LinkedList* pArrayListaCliente
 	return retorno;
 }
 
+/*
+* \brief Función que guarda los datos de un cliente en el archivo pasado como parámetro de la función que llama a esta.
+* \param void* es el puntero al cliente.
+* \param int es la cantidad de ventas recibidas como parámetro.
+* \return (-1) Error (0) todo OK
+*/
 int controller_saveClienteConCantidadDeVentasAsText(FILE* pFile, void* pCliente, int cantidadVentas)
 {
 	int retorno = -1;
@@ -630,7 +714,7 @@ int controller_saveClienteConCantidadDeVentasAsText(FILE* pFile, void* pCliente,
 
 /*
 * \brief Función que ordena los clientes
-* \param pArrayListEmployee LinkedList* es el puntero al array de empleados.
+* \param pArrayListEmployee LinkedList* es el puntero al array de clientes.
 * \return (-1) Error (0) todo OK
 */
 int controller_sortClientes(LinkedList* pArrayListaClientes)
@@ -655,19 +739,20 @@ int controller_sortClientes(LinkedList* pArrayListaClientes)
  */
 static int generarNuevoId(LinkedList* pArrayListaClientes)
 {
-    static int id = -1;
-    static int esLaPrimeraVez = TRUE;
+    static int id = -1; // Inicializo el ID en -1.
+
+    static int flagPrimeraVez = TRUE;
 
     if(pArrayListaClientes != NULL)
     {
-    	if(ll_isEmpty(pArrayListaClientes) == 0 && esLaPrimeraVez == TRUE)
+    	if(ll_isEmpty(pArrayListaClientes) == 0 && flagPrimeraVez == TRUE) // Si la lista no está vacía y es la primera vez...
     	{
-    		id = encontrarMaximoId(pArrayListaClientes);
-    		esLaPrimeraVez = FALSE;
+    		id = encontrarMaximoId(pArrayListaClientes); // Le asigno a mi variable ID el valor que encuentra la función encontrarMaximoId.
+    		flagPrimeraVez = FALSE; // Levanto la flag.
     	}
-    	id++;
+    	id++; // Aumento el contador del ID.
     }
-    return id;
+    return id; // Retorno el ID.
 }
 
 /**
@@ -680,37 +765,38 @@ static int encontrarMaximoId(LinkedList* pArrayListaClientes)
 {
 	Cliente* pCliente;
 
-	int maximo;
+	int maximo; // Declaro una variable auxiliar para guardar el máximo.
 
-	int id = -1;
+	int id = -1; // Inicializo el ID en -1.
 
 	if(pArrayListaClientes != NULL)
 	{
 		for(int i = 0 ; i < ll_len(pArrayListaClientes) ; i++)
 		{
-			pCliente = ll_get(pArrayListaClientes, i);
-			cliente_getIdCliente(pCliente, &id);
-			if(i == 0 || id > maximo)
+			pCliente = ll_get(pArrayListaClientes, i); // Obtengo el índice que quiero del array de clientes y lo guardo en pCliente.
+			cliente_getIdCliente(pCliente, &id); // Obtengo el ID de ese cliente.
+
+			if(i == 0 || id > maximo) // Chequeo si el ID que obtuve es mayor al máximo actual.
 			{
-				maximo = id;
+				maximo = id; // Si es mayor, el nuevo máximo es el ID que le pasé.
 			}
 		}
-		id = maximo;
+		id = maximo; // Al salir del bucle, me guardo en la variable ID el máximo que obtuve.
 	}
-	return id;
+	return id; // Retorno el ID.
 }
 
 static int generarNuevoIdVentas(LinkedList* pArrayListaVentas)
 {
     static int id = -1;
-    static int esLaPrimeraVez = TRUE;
+    static int flagPrimeraVez = TRUE;
 
     if(pArrayListaVentas != NULL)
     {
-    	if(ll_isEmpty(pArrayListaVentas) == 0 && esLaPrimeraVez == TRUE)
+    	if(ll_isEmpty(pArrayListaVentas) == 0 && flagPrimeraVez == TRUE)
     	{
     		id = encontrarMaximoIdVentas(pArrayListaVentas);
-    		esLaPrimeraVez = FALSE;
+    		flagPrimeraVez = FALSE;
     	}
     	id++;
     }
@@ -731,6 +817,7 @@ static int encontrarMaximoIdVentas(LinkedList* pArrayListaVentas)
 		{
 			pVenta = ll_get(pArrayListaVentas, i);
 			venta_getIdVenta(pVenta, &id);
+
 			if(i == 0 || id > maximo)
 			{
 				maximo = id;

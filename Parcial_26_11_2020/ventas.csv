@@ -1,12 +1,18 @@
-1,1,4,archivo.1,zona sur,1
-2,2,7,archivo.2,caba,0
-3,3,9,archivo.39,zona oeste,0
-4,4,10,archivo.4,zona sur,1
+1,1,4,archivo.1,0,1
+2,2,7,archivo.2,2,0
+3,3,9,archivo.39,0,0
+4,4,10,archivo.4,1,1
 1,5,40,probando.png,2,1
-1,6,100,pruebita.rtx,1,1
+2,6,100,asd.jpg,1,1
 1,7,900,jaja.jpg,1,1
 2,8,20,asjdasjd.txg,1,0
 6,9,2000,papa.png,2,1
 7,10,1,cortez.jpg,1,1
 1,11,1500,maximo.png,2,1
 8,12,10,menendez.png,2,0
+3,13,20,pokemon.png,0,0
+3,14,30,ultimo.png,1,0
+3,15,40,ultimaso.asd,2,0
+1,16,40,ultimaso.asd,1,0
+8,17,20,ochaso,1,0
+8,18,90,ochaso2,2,0

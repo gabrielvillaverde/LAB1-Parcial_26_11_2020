@@ -44,7 +44,7 @@ int informes_imprimirClienteConMasAfichesVendidos(LinkedList* pArrayListaCliente
 
 			if(pListaFiltrada != NULL && ll_len(pListaFiltrada) > 0)
 			{
-				cantidadAfiches = ll_count(pListaFiltrada, venta_retornarCantidadAfiches);
+				cantidadAfiches = ll_count(pListaFiltrada, venta_calcularCantidadAfiches);
 
 				if(cantidadAfiches != 0)
 				{
@@ -98,7 +98,7 @@ int informes_imprimirClienteConMenosAfichesVendidos(LinkedList* pArrayListaClien
 
 			if(pListaFiltrada != NULL && ll_len(pListaFiltrada) > 0) // Para que no reciba lista de ventas vacías, ya que puede haber clientes sin ventas cobradas y su lista filtrada va a tener 0 elementos.
 			{
-				cantidadAfiches = ll_count(pListaFiltrada, venta_retornarCantidadAfiches);
+				cantidadAfiches = ll_count(pListaFiltrada, venta_calcularCantidadAfiches);
 
 				if(cantidadAfiches != 0)
 				{

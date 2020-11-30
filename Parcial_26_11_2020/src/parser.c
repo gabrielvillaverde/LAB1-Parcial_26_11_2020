@@ -39,7 +39,7 @@ int parser_leerListaClientesFromText(FILE* pFile, LinkedList* pArrayListaCliente
 				if(pCliente != NULL)
 				{
 					// DEBUG:
-					printf("ID de cliente: %s - Nombre: %s - Apellido: %s - CUIT: %s\n", idClienteAuxiliar, nombreAuxiliar, apellidoAuxiliar, cuitAuxiliar);
+					// printf("ID de cliente: %s - Nombre: %s - Apellido: %s - CUIT: %s\n", idClienteAuxiliar, nombreAuxiliar, apellidoAuxiliar, cuitAuxiliar);
 					ll_add(pArrayListaClientes, pCliente); // Agrego el puntero a Cliente* en la lista enlazada.
 					retorno = 0;
 				}
@@ -65,7 +65,7 @@ int parser_leerListaVentasFromText(FILE* pFile, LinkedList* pArrayListaVentas)
 	char idClienteAuxiliar[10000];
 	char idVentaAuxiliar[10000];
 	char cantidadAfichesAuxiliar[10000];
-	char nombreArchivoAuxiliar[SIZE_NOMBRE_ARCHIVO];
+	char nombreArchivoAuxiliar[10000];
 	char zonaAuxiliar[10000];
 	char cobradoAuxiliar[10000];
 
@@ -76,10 +76,11 @@ int parser_leerListaVentasFromText(FILE* pFile, LinkedList* pArrayListaVentas)
 			if(fscanf(pFile, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^\n]\n", idClienteAuxiliar, idVentaAuxiliar, cantidadAfichesAuxiliar, nombreArchivoAuxiliar, zonaAuxiliar, cobradoAuxiliar) == 6)
 			{
 				pVenta = venta_newParametros(idClienteAuxiliar, idVentaAuxiliar, cantidadAfichesAuxiliar, nombreArchivoAuxiliar, zonaAuxiliar, cobradoAuxiliar);
+
 				if(pVenta != NULL)
 				{
 					// DEBUG:
-					printf("ID de cliente: %s - ID de venta: %s - Cantidad de afiches: %s - Nombre de archivo: %s - Zona: %s - Cobrado: %s\n", idClienteAuxiliar, idVentaAuxiliar, cantidadAfichesAuxiliar, nombreArchivoAuxiliar, zonaAuxiliar, cobradoAuxiliar);
+					// printf("ID de cliente: %s - ID de venta: %s - Cantidad de afiches: %s - Nombre de archivo: %s - Zona: %s - Cobrado: %s\n", idClienteAuxiliar, idVentaAuxiliar, cantidadAfichesAuxiliar, nombreArchivoAuxiliar, zonaAuxiliar, cobradoAuxiliar);
 					ll_add(pArrayListaVentas, pVenta); // Agrego el puntero a Cliente* en la lista enlazada.
 					retorno = 0;
 				}

@@ -51,6 +51,10 @@ Cliente* cliente_newParametros(char* idCliente, char* nombre, char* apellido, ch
 	return pCliente;
 }
 
+/*
+* \brief Función que borra un cliente y libera espacio de memoria.
+* \param Cliente* Puntero al cliente.
+*/
 void cliente_delete(Cliente* this)
 {
 	if(this != NULL)
@@ -59,7 +63,12 @@ void cliente_delete(Cliente* this)
 	}
 }
 
-/* Retorna -1 si no encontró el ID, retorna el índice si encontró el ID. */
+/*
+* \brief Función que busca un cliente por el ID que recibe como parámetro.
+* \param pArrayListaClientes LinkedList* es el puntero al array de clientes.
+* \param int, es el ID que recibe como parámetro.
+* \Retorna -1 si no encontró el ID,  el índice si encontró el ID.
+*/
 int cliente_findClienteById(LinkedList* pArrayListaClientes, int id)
 {
     int retorno = -1;
@@ -83,7 +92,12 @@ int cliente_findClienteById(LinkedList* pArrayListaClientes, int id)
     return retorno;
 }
 
-/* Retorna -1 si no encontró el ID, retorna el índice si encontró el ID. */
+/*
+* \brief Función que busca un cliente por el ID que recibe como parámetro como texto.
+* \param pArrayListaClientes LinkedList* es el puntero al array de clientes.
+* \param int, es el ID que recibe como parámetro como texto.
+* \Retorna -1 si no encontró el ID, o retorna el índice del cliente si encontró el ID.
+*/
 int cliente_findClienteByIdTxt(LinkedList* pArrayListaClientes, char* pId)
 {
     int retorno = -1;
@@ -110,6 +124,12 @@ int cliente_findClienteByIdTxt(LinkedList* pArrayListaClientes, char* pId)
     return retorno;
 }
 
+/*
+* \brief Función que busca un cliente por el ID que recibe como parámetro e imprime sus datos
+* \param pArrayListaClientes LinkedList* es el puntero al array de clientes.
+* \param int, es el ID que recibe como parámetro.
+* \Retorna -1 si no encontró el ID,  el índice si encontró el ID.
+*/
 int cliente_findClienteByIdAndImprimir(LinkedList* pArrayListaClientes, int id)
 {
 	int retorno = -1;
@@ -137,7 +157,12 @@ int cliente_findClienteByIdAndImprimir(LinkedList* pArrayListaClientes, int id)
 	return retorno;
 }
 
-/* Retorna 0 si no es repetido, 1 si es repetido.*/
+/*
+* \brief Función que chequea si el CUIT de un cliente está repetido o no, comparándolo con el CUIT que recibe como parámetro.
+* \param pArrayListaClientes LinkedList* es el puntero al array de clientes.
+* \param char*, es el puntero al CUIT que recibe como parámetro.
+* \Retorna 0 si el CUIT no está repetido, 1 si está repetido.
+*/
 int cliente_esCuitRepetido(LinkedList* pArrayListaClientes, char* pCuit)
 {
 	int retorno = 0;
@@ -165,7 +190,12 @@ int cliente_esCuitRepetido(LinkedList* pArrayListaClientes, char* pCuit)
 	return retorno;
 }
 
-/* Retorna 0 si no es repetido, 1 si es repetido.*/
+/*
+* \brief Función que chequea si el ID de un cliente está repetido o no, comparándolo con el ID que recibe como parámetro.
+* \param pArrayListaClientes LinkedList* es el puntero al array de clientes.
+* \param char*, es el puntero al ID que recibe como parámetro.
+* \Retorna 0 si el ID no está repetido, 1 si está repetido.
+*/
 int cliente_esIdRepetido(LinkedList* pArrayListaClientes, char* pId)
 {
 	int retorno = 0;
@@ -259,7 +289,7 @@ int cliente_compareByName(void* pFirstElem, void* pSecondElem)
 	cliente_getNombre(pFirstElem, firstName);
 	cliente_getNombre(pSecondElem, secondName);
 
-	if(strncmp(firstName, secondName, 100) > 0)
+	if(strncmp(firstName, secondName, 100) > 0) // strncmp devuelve 1 si firstName es mayor a secondName.
 	{
 		retorno = 1;
 	}
@@ -327,6 +357,12 @@ int cliente_compareByCuit(void* pFirstElem, void* pSecondElem)
 	return retorno;
 }
 
+/*
+* \brief Función que compara los ID
+* \param puntero al primer elemento.
+* \param puntero al segundo elemento.
+* \return (0) si son iguales, (-1) si el primero es menor al segundo, (1) si el primero es mayor al segundo
+*/
 int cliente_compareById(void* pFirstElem, void* pSecondElem)
 {
 	int retorno = 0;

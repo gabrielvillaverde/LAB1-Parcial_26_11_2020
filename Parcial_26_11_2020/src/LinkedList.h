@@ -44,7 +44,6 @@ int ll_map2(LinkedList* this, int (*pFunc)(void*, char*), void* argumento);
 LinkedList* ll_filter(LinkedList* this, int (*pFunc)(void*));
 LinkedList* ll_filter2(LinkedList* this, int (*pFunc)(void*,void*), void* argumento);
 LinkedList* ll_filter3(LinkedList* this, int (*pFunc)(void*, void*, void*), void* argumentoUno, void* argumentoDos);
-int ll_reduce(LinkedList* this, int (*pFunc)(void*, int, int));
-int ll_reduceInt(LinkedList* this, int (*pFunc)(void*,void*), void* argumento);
+int ll_reduceInt(LinkedList* this, int (*pFunc)(void*));
 float ll_reduceFloat(LinkedList* this, float (*pFunc)(void*));
 int ll_count(LinkedList* this, int(*pFunc)(void*));
