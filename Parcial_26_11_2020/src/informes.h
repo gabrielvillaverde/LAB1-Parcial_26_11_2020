@@ -12,4 +12,9 @@ int informes_imprimirClienteConMasAfichesVendidos(LinkedList* pArrayListaCliente
 int informes_imprimirClienteConMenosAfichesVendidos(LinkedList* pArrayListaClientes, LinkedList* pArrayListaVentas);
 int informes_imprimirVentaConMasAfichesVendidos(LinkedList* pArrayListaClientes, LinkedList* pArrayListaVentas);
 
+int informes_imprimirZonaConMasVentas(LinkedList* pArrayListaVentas);
+int informes_imprimirZonaConMasVentas2(LinkedList* pArrayListaVentas);
+int informes_imprimirClienteConMasVentasCobradas(LinkedList* pArrayListaClientes, LinkedList* pArrayListaVentas);
+int informes_imprimirClienteConMenosVentasCobradas(LinkedList* pArrayListaClientes, LinkedList* pArrayListaVentas);
+
 #endif /* INFORMES_H_ */

@@ -24,4 +24,9 @@ int controller_generarInformeDeCobros(char* path, LinkedList* pArrayListaCliente
 int controller_saveClienteConCantidadDeVentasAsText(FILE* pFile, void* pCliente, int cantidadVentas);
 int controller_sortClientes(LinkedList* pArrayListaClientes);
 
+int controller_generarListaVentasConAfichesQueSePudieronImprimir(LinkedList* pArrayListaVentas);
+int controller_obtenerVentasZonaSur(LinkedList* pArrayListaVentas);
+int controller_obtenerVentasZona(LinkedList* pArrayListaVentas, int zona);
+int controller_cantidadAfichesPromedioPorTodasLasVentas(LinkedList* pArrayListaVentas);
+
 #endif /* CONTROLLER_H_ */

@@ -249,7 +249,7 @@ int ll_remove(LinkedList* this, int index)
     	{
     		if(index == 0) // Si estoy en la primera posición...
     		{
-    			this->pFirstNode = pNodeToRemove->pNextNode; // Le paso al primer nodo de la lista, hacia donde apunta el nodo que voy a remover.B
+    			this->pFirstNode = pNodeToRemove->pNextNode; // Le paso al primer nodo de la lista, hacia donde apunta el nodo que voy a remover.
     			// this->pFirstNode = NULL; Esto provocaría que al borrar el primer nodo de la lista, se rompa la LinkedList.
     		}
     		else

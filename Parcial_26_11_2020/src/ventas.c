@@ -211,7 +211,7 @@ int venta_chequearIdYCalcularCantidadAfiches(void* pElement, void* pId)
 * \param void* es el puntero al elemento que recibe como parámetro.
 * \Retorna la cantidad de afiches, retorna 0 si da algún error.
 */
-int venta_calcularCantidadAfiches(void* pElement)
+int venta_retornarCantidadAfiches(void* pElement)
 {
 	int retorno = 0;
 
@@ -223,6 +223,151 @@ int venta_calcularCantidadAfiches(void* pElement)
 	{
 		venta_getCantidadAfiches(pVenta, &cantidadAfiches);
 		retorno = cantidadAfiches;
+	}
+	return retorno;
+}
+
+/*
+* \brief Función que retorna la zona.
+* \param void* es el puntero al elemento que recibe como parámetro.
+* \Retorna las zonas, retorna 0 si da algún error.
+*/
+int venta_retornarZona(void* pElement)
+{
+	int retorno = 0;
+
+	int zona;
+
+	Venta* pVenta = (Venta*) pElement;
+
+	if(pVenta != NULL)
+	{
+		venta_getZona(pVenta, &zona);
+		printf("\nZona: %d\n", zona);
+		retorno = zona;
+	}
+	return retorno;
+}
+
+
+/*
+* \brief Función que calcula el 20% sobre la cantidad de afiches de cada venta.
+* \param void* es el puntero al elemento que recibe como parámetro.
+* \Retorna -1 para error, 1 OK.
+*/
+int venta_calculo20PorCientoSobreCantidadAfiches(void* pElement)
+{
+	int retorno = 0;
+
+	int cantidadAfiches;
+	int cantidadAfichesNueva;
+
+	Venta* pVenta = (Venta*) pElement;
+
+	if(pVenta != NULL)
+	{
+		venta_getCantidadAfiches(pVenta, &cantidadAfiches);
+		cantidadAfichesNueva = cantidadAfiches - (cantidadAfiches * 0.80);
+		venta_setCantidadAfiches(pVenta, cantidadAfichesNueva);
+		retorno = 1;
+	}
+	return retorno;
+}
+
+/*
+* \brief Función que obtiene la zona CABA
+* \param void* es el puntero al elemento que recibe como parámetro.
+* \Retorna -1 para error, 1 OK.
+*/
+int venta_obtenerZonaCaba(void* pElement)
+{
+	int retorno = 0;
+
+	int zona;
+
+	Venta* pVenta = (Venta*) pElement;
+
+	if(pVenta != NULL)
+	{
+		venta_getZona(pVenta, &zona);
+		if(zona == 0)
+		{
+			retorno = 1;
+		}
+	}
+	return retorno;
+}
+
+/*
+* \brief Función que obtiene la zona sur
+* \param void* es el puntero al elemento que recibe como parámetro.
+* \Retorna -1 para error, 1 OK.
+*/
+int venta_obtenerZonaSur(void* pElement)
+{
+	int retorno = 0;
+
+	int zona;
+
+	Venta* pVenta = (Venta*) pElement;
+
+	if(pVenta != NULL)
+	{
+		venta_getZona(pVenta, &zona);
+		if(zona == 1)
+		{
+			retorno = 1;
+		}
+	}
+	return retorno;
+}
+
+/*
+* \brief Función que obtiene la zona oeste
+* \param void* es el puntero al elemento que recibe como parámetro.
+* \Retorna -1 para error, 1 OK.
+*/
+int venta_obtenerZonaOeste(void* pElement)
+{
+	int retorno = 0;
+
+	int zona;
+
+	Venta* pVenta = (Venta*) pElement;
+
+	if(pVenta != NULL)
+	{
+		venta_getZona(pVenta, &zona);
+		if(zona == 2)
+		{
+			retorno = 1;
+		}
+	}
+	return retorno;
+}
+
+/*
+* \brief Función que obtiene la zona pasada como parámetro en la función principal.
+* \param void* es el puntero al elemento que recibe como parámetro.
+* \Retorna -1 para error, 1 OK.
+*/
+int venta_obtenerZona(void* pElement, void* pZona)
+{
+	int retorno = 0;
+
+	int zona;
+
+	Venta* pVenta = (Venta*) pElement;
+
+	int* pZonaAuxiliar = (int*) pZona;
+
+	if(pVenta != NULL)
+	{
+		venta_getZona(pVenta, &zona);
+		if(zona == *pZonaAuxiliar)
+		{
+			retorno = 1;
+		}
 	}
 	return retorno;
 }

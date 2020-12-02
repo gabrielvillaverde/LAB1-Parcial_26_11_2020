@@ -57,7 +57,14 @@ int main(void)
     			"12 -  Eliminar cliente.\n"
     			"13 -  Eliminar cliente junto con todas sus ventas.\n"
     			"14 -  Ordenar clientes.\n"
-    			"15  -  Salir\n", "\nError, ingrese una opción entre 1 y 13.\n", &opcion, 1, 15, 3) == 0)
+    			"15 -  Imprimir cantidad de ventas que si se pudieron imprimir.\n"
+    			"16 -  Obtener las ventas de zona sur.\n"
+    			"17 -  Obtener las ventas de CABA (pasada como parámetro).\n"
+    			"18 -  Obtener la cantidad de afiches promedio por cada venta.\n"
+    			"19 -  Imprimir la zona con más ventas.\n"
+    			"20 -  Imprimir cliente con más ventas cobradas.\n"
+    			"21 -  Imprimir cliente con menos ventas cobradas.\n"
+    			"22  -  Salir\n", "\nError, ingrese una opción correcta.\n", &opcion, 1, 22, 3) == 0)
     	{
     		switch(opcion)
     		{
@@ -192,9 +199,51 @@ int main(void)
     				printf("\nClientes ordenados correctamente.\n");
     			}
     			break;
+    		case 15:
+    			if(controller_generarListaVentasConAfichesQueSePudieronImprimir(listaVentas) == 0)
+    			{
+    				printf("\nLa lista de ventas sin el 20 por ciento de afiches que falló se imprimió correctamente.\n");
+    			}
+    			break;
+    		case 16:
+    			if(controller_obtenerVentasZonaSur(listaVentas) == 0)
+    			{
+    				printf("\nLas ventas de zona sur se han impreso correctamente.\n");
+    			}
+    			break;
+    		case 17:
+    			if(controller_obtenerVentasZona(listaVentas, 0) == 0)
+    			{
+    				printf("\nLas ventas de CABA (0) se han impreso correctamente.\n");
+    			}
+    			break;
+    		case 18:
+    			if(controller_cantidadAfichesPromedioPorTodasLasVentas(listaVentas) == 0)
+    			{
+    				printf("\nLa cantidad de afiches promedio por cada venta se imprimió correctamente.\n");
+    			}
+    			break;
+    		case 19:
+    			if(informes_imprimirZonaConMasVentas2(listaVentas) == 0)
+    			{
+    				printf("\nLa zona con más ventas fue impresa correctamente.\n");
+    			}
+    			break;
+    		case 20:
+    			if(informes_imprimirClienteConMasVentasCobradas(listaClientes, listaVentas) == 0)
+    			{
+    				printf("\nEl cliente con más ventas cobradas fue impreso correctamente.\n");
+    			}
+    			break;
+    		case 21:
+    			if(informes_imprimirClienteConMenosVentasCobradas(listaClientes, listaVentas) == 0)
+    			{
+    				printf("\nEl cliente con menos ventas cobradas fue impreso correctamente.\n");
+    			}
+    			break;
     		}
     	}
-	}while(opcion != 15);
+	}while(opcion != 22);
 
 	return EXIT_SUCCESS;
 }

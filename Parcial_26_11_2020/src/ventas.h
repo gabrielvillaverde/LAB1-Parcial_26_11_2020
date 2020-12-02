@@ -29,7 +29,7 @@ int venta_chequearEstadoNoCobrado(void* pElement);
 int venta_chequearId(void* pElement, void* pId);
 int venta_chequearIdYEstadoCobranza(void* pElement, void* pId, void* pEstado);
 int venta_chequearIdYCalcularCantidadAfiches(void* pElement, void* pId);
-int venta_calcularCantidadAfiches(void* argumento);
+int venta_retornarCantidadAfiches(void* argumento);
 int venta_contarClienteConMasAfichesVendidos(void* pElement);
 int venta_findVentaById(LinkedList* pArrayListaVentas, int id);
 int venta_findVentaByIdAndCheckEstadoCobranza(LinkedList* pArrayListaVentas, int id, int estado);
@@ -52,6 +52,8 @@ int venta_getCantidadAfichesTxt(Venta* this, char* cantidadAfiches);
 int venta_setNombreArchivo(Venta* this, char* nombreArchivo);
 int venta_getNombreArchivo(Venta* this, char* nombreArchivo);
 
+int venta_getZona(Venta* this, int* zona);
+int venta_setZona(Venta* this, int zona);
 int venta_setZonaTxt(Venta* this, char* zona);
 int venta_getZonaTxt(Venta* this, char* zona);
 
@@ -64,5 +66,12 @@ int venta_getCobradoTxt(Venta* this, char* cobrado);
 int venta_setZona(Venta* this, int zona);
 int venta_getZona(Venta* this, int* zona);
 */
+
+int venta_calculo20PorCientoSobreCantidadAfiches(void* pElement);
+int venta_obtenerZonaCaba(void* pElement);
+int venta_obtenerZonaSur(void* pElement);
+int venta_obtenerZonaOeste(void* pElement);
+int venta_obtenerZona(void* pElement, void* pZona);
+int venta_retornarZona(void* pElement);
 
 #endif /* VENTAS_H_ */

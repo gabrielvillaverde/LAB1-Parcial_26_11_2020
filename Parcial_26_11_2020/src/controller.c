@@ -289,7 +289,7 @@ int controller_removeClienteConTodasSusVentas(LinkedList* pArrayListaClientes, L
 
 	int idCliente;
 	int idClienteAuxiliar;
-	//int idVentaAuxiliar;
+	int idVentaAuxiliar;
 	int indiceClienteEliminar;
 	int opcion;
 
@@ -319,7 +319,7 @@ int controller_removeClienteConTodasSusVentas(LinkedList* pArrayListaClientes, L
 						pVenta = ll_get(pArrayListaVentas, i);
 
 						venta_getIdCliente(pVenta, &idClienteAuxiliar);
-						//venta_getIdVenta(pVenta, &idVentaAuxiliar);
+						venta_getIdVenta(pVenta, &idVentaAuxiliar);
 
 						if(idClienteAuxiliar == idCliente)
 						{
@@ -758,7 +758,7 @@ int controller_sortClientes(LinkedList* pArrayListaClientes)
     return retorno;
 }
 
-/**
+/*
  * \brief Genera un nuevo ID para un nuevo cliente
  * 		  Se inicializa a partir del último ID encontrado como máximo, si es que hay datos cargados de un archivo.
  * 		  Solo busca el máximo una vez, y luego sigue otorgando ID a partir del último que dió.
@@ -784,12 +784,12 @@ static int generarNuevoId(LinkedList* pArrayListaClientes)
     return id; // Retorno el ID.
 }
 
-/**
- * \brief Busca en el array el máximo ID ya cargado.
- * \param pArrayListaClientes LinkedList* puntero al array de clientes
- * \return int Return (-1) Si el puntero a LinkedList es NULL
- * 					   o el máximo ID encontrado en el archivo
- */
+/*
+* \brief Busca en el array el máximo ID ya cargado.
+* \param pArrayListaClientes LinkedList* puntero al array de clientes
+* \return int Return (-1) Si el puntero a LinkedList es NULL
+* 					   o el máximo ID encontrado en el archivo
+*/
 static int encontrarMaximoId(LinkedList* pArrayListaClientes)
 {
 	Cliente* pCliente;
@@ -855,4 +855,103 @@ static int encontrarMaximoIdVentas(LinkedList* pArrayListaVentas)
 		id = maximo;
 	}
 	return id;
+}
+
+
+/*
+Debido a un fallo de la fabrica, de cada venta no se pudieron imprimir todos los afiches.
+De cada venta, solo un 20% fallo. Generar una nueva lista de ventas que contenga el porcentaje de los afiches que si se pudieron imprimir.
+*/
+
+/*
+* \brief Función que genera una lista con el 80% de las ventas que sí se pudieron imprimir.
+* \param pArrayListaVentas LinkedList* puntero al array de ventas
+* \return (-1) Error (0) todo OK
+*/
+int controller_generarListaVentasConAfichesQueSePudieronImprimir(LinkedList* pArrayListaVentas)
+{
+	int retorno = -1;
+
+	if(pArrayListaVentas != NULL)
+	{
+		if(ll_map(pArrayListaVentas, venta_calculo20PorCientoSobreCantidadAfiches) == 0)
+		{
+			retorno = 0;
+		}
+		controller_imprimirVentas(pArrayListaVentas);
+	}
+	return retorno;
+}
+
+/*
+* \brief Función que genera una nueva lista, solo con las ventas de zona sur.
+* \param pArrayListaVentas LinkedList* puntero al array de ventas
+* \return (-1) Error (0) todo OK
+*/
+int controller_obtenerVentasZonaSur(LinkedList* pArrayListaVentas)
+{
+	int retorno = -1;
+
+	LinkedList* pListaFiltrada;
+
+	if(pArrayListaVentas != NULL)
+	{
+		pListaFiltrada = ll_filter(pArrayListaVentas, venta_obtenerZonaSur);
+		if(pListaFiltrada != NULL)
+		{
+			controller_imprimirVentas(pListaFiltrada);
+			retorno = 0;
+		}
+	}
+
+	return retorno;
+}
+
+/*
+* \brief Función que genera una nueva lista con las ventas de la zona pasada como parámetro.
+* \param pArrayListaVentas LinkedList* puntero al array de ventas
+* \param int es la zona que recibe como parámetro.
+* \return (-1) Error (0) todo OK
+*/
+int controller_obtenerVentasZona(LinkedList* pArrayListaVentas, int zona)
+{
+	int retorno = -1;
+
+	LinkedList* pListaFiltrada;
+
+	if(pArrayListaVentas != NULL)
+	{
+		pListaFiltrada = ll_filter2(pArrayListaVentas, venta_obtenerZona, &zona);
+		if(pListaFiltrada != NULL)
+		{
+			controller_imprimirVentas(pListaFiltrada);
+			retorno = 0;
+		}
+	}
+
+	return retorno;
+}
+
+/*
+* \brief Función que calcula la cantidad de afiches promedio por todas las ventas.
+* \param pArrayListaVentas LinkedList* puntero al array de ventas
+* \return (-1) Error (0) todo OK
+*/
+int controller_cantidadAfichesPromedioPorTodasLasVentas(LinkedList* pArrayListaVentas)
+{
+	int retorno = -1;
+
+	int cantidadAfichesTotal;
+	int promedioCantidadAfiches;
+	int cantidadVentas;
+
+	if(pArrayListaVentas != NULL)
+	{
+		cantidadAfichesTotal = ll_count(pArrayListaVentas, venta_retornarCantidadAfiches);
+		cantidadVentas = ll_len(pArrayListaVentas);
+		promedioCantidadAfiches = cantidadAfichesTotal / cantidadVentas;
+		printf("\nEl promedio de la cantidad de afiches de todas las ventas es: %d", promedioCantidadAfiches);
+		retorno = 0;
+	}
+	return retorno;
 }
