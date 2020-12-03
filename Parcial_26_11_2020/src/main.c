@@ -53,7 +53,7 @@ int main(void)
     			"8  -  Imprimir clientes.\n"
     			"9  -  Imprimir ventas.\n"
     			"10 -  Guardar los datos de los clientes en clientes.csv.\n"
-    			"11 -  Guardar los datos de las ventas en ventas.csv.\n"
+    			"11 -  Guardar los datos de las ventas en ventas.csv.\n"/*
     			"12 -  Eliminar cliente.\n"
     			"13 -  Eliminar cliente junto con todas sus ventas.\n"
     			"14 -  Ordenar clientes.\n"
@@ -63,7 +63,7 @@ int main(void)
     			"18 -  Obtener la cantidad de afiches promedio por cada venta.\n"
     			"19 -  Imprimir la zona con más ventas.\n"
     			"20 -  Imprimir cliente con más ventas cobradas.\n"
-    			"21 -  Imprimir cliente con menos ventas cobradas.\n"
+    			"21 -  Imprimir cliente con menos ventas cobradas.\n"*/
     			"22  -  Salir\n", "\nError, ingrese una opción correcta.\n", &opcion, 1, 22, 3) == 0)
     	{
     		switch(opcion)
